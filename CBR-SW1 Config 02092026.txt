@@ -1,0 +1,489 @@
+######################CBR-SW1 NETWORKING PROJECT 1 CANBERRA L3 Switch#############
+
+en
+conf t
+
+hostname CBR-SW1
+enable secret Password01
+
+
+no ip domain lookup
+ip domain name cyberdyne.com
+username admin privilege 15 secret Password01
+ip ssh version 2
+
+ip access-list standard CBR-MGMT-ACCESS
+permit 10.10.5.192 0.0.0.63
+permit 10.20.1.0 0.0.0.7
+deny any
+
+line vty 0 4
+access-class CBR-MGMT-ACCESS in
+login local
+transport input ssh
+
+line vty 5 15
+access-class CBR-MGMT-ACCESS in
+login local
+transport input ssh
+
+ip access-list standard CBR-MGMT-ACCESS
+25 permit host 10.10.4.10
+27 permit host 10.10.4.20
+
+#############################LAYER 3 ROUTING####################################
+
+ip routing
+
+#############################LINK TO CBR-GW#####################################
+
+interface range GigabitEthernet1/0/1 - 2
+description LACP_MEMBERS_TO_CBR-GW
+no switchport
+channel-group 1 mode active
+no shutdown
+exit
+
+interface Port-channel1
+description description P2P_TRANSIT_TO_CBR-GW
+no switchport
+ip address 10.20.15.253 255.255.255.252
+no shutdown
+exit
+
+
+#############################OSPF ROUTING########################################
+interface Port-channel1
+ip ospf 1 area 0
+
+router ospf 1
+router-id 4.4.4.4
+passive-interface default
+no passive-interface Port-channel1
+log-adjacency-changes
+
+interface Vlan10
+ip ospf 1 area 0
+
+interface Vlan20
+ip ospf 1 area 0
+
+interface Vlan30
+ip ospf 1 area 0
+
+interface Vlan40
+ip ospf 1 area 0
+
+interface Vlan50
+ip ospf 1 area 0
+
+interface Vlan60
+ip ospf 1 area 0
+
+interface Vlan70
+ip ospf 1 area 0
+
+interface Vlan99
+ip ospf 1 area 0
+
+#############################DEFAULT ROUTE######################################
+
+ip route 0.0.0.0 0.0.0.0 10.20.15.254
+
+#############################VLAN CONFIGURATION#################################
+
+vlan 10
+name STAFF
+
+vlan 20
+name SERVER-INFRA
+
+vlan 30
+name GUEST
+
+vlan 40
+name RESTRICTED
+
+vlan 50
+name DEVICES
+
+vlan 60
+name ITADMIN
+
+vlan 70
+name EXEC
+
+vlan 99
+name MANAGEMENT
+
+vlan 998
+name NATIVE
+
+vlan 999
+name BLACKHOLE
+
+
+
+#############################SVI / INTER-VLAN ROUTING############################
+
+interface Vlan10
+description STAFF_GATEWAY
+ip address 10.20.0.1 255.255.255.192
+no shutdown
+
+interface Vlan20
+description SERVER_INFRA_GATEWAY
+ip address 10.20.0.225 255.255.255.240
+no shutdown
+
+interface Vlan30
+description GUEST_GATEWAY
+ip address 10.20.0.65 255.255.255.192
+no shutdown
+
+interface Vlan40
+description RESTRICTED_GATEWAY
+ip address 10.20.0.129 255.255.255.192
+no shutdown
+
+interface Vlan50
+description DEVICES_GATEWAY
+ip address 10.20.0.193 255.255.255.224
+no shutdown
+
+interface Vlan60
+description ITADMIN_GATEWAY
+ip address 10.20.1.1 255.255.255.248
+no shutdown
+
+interface Vlan70
+description EXEC_GATEWAY
+ip address 10.20.0.241 255.255.255.240
+no shutdown
+
+interface Vlan99
+description MANAGEMENT_GATEWAY
+ip address 10.20.1.9 255.255.255.248
+no shutdown
+
+##show vlan brief##
+##show ip interface brief##
+
+#############################ACCESS PORTS########################################
+
+interface GigabitEthernet1/0/3
+description WS-CBR
+switchport mode access
+switchport access vlan 10
+spanning-tree portfast
+no shutdown
+
+##show vlan brief##
+##show ip interface brief | include Vlan10##
+
+#############################UNUSED PORTS########################################
+
+interface range GigabitEthernet1/0/4 - 24
+description UNUSED
+switchport mode access
+switchport access vlan 999
+shutdown
+
+interface range GigabitEthernet1/1/1 - 4
+description UNUSED
+switchport mode access
+switchport access vlan 999
+shutdown
+
+#############################PORT SECURITY######################################
+
+interface GigabitEthernet1/0/3
+switchport port-security
+switchport port-security maximum 3
+switchport port-security mac-address sticky
+switchport port-security violation restrict
+
+#############################DHCP RELAY##########################################
+
+interface Vlan10
+ip helper-address 10.20.15.254
+
+interface Vlan30
+ip helper-address 10.20.15.254
+
+interface Vlan40
+ip helper-address 10.20.15.254
+
+interface Vlan50
+ip helper-address 10.20.15.254
+
+interface Vlan60
+ip helper-address 10.20.15.254
+
+interface Vlan70
+ip helper-address 10.20.15.254
+
+
+##show ip dhcp binding##
+
+#############################LAYER 3 ACLS########################################
+####RESTRICTED####
+
+ip access-list extended CBR-RESTRICTED-IN
+
+remark Allow DHCP requests to central DHCP server
+permit udp any eq bootpc any eq bootps
+
+remark Block Restricted VLAN from routing outside its VLAN
+deny ip 10.20.0.128 0.0.0.63 any
+
+interface Vlan40
+ip access-group CBR-RESTRICTED-IN in
+
+show access-lists CBR-RESTRICTED-IN
+show ip interface Vlan40
+
+####GUEST####
+
+ip access-list extended CBR-GUEST-IN
+remark Allow DHCP
+permit udp any eq bootpc any eq bootps
+
+remark Allow DNS to Cyberdyne_T800
+permit udp 10.20.0.64 0.0.0.63 host 10.10.4.10 eq domain
+permit tcp 10.20.0.64 0.0.0.63 host 10.10.4.10 eq domain
+
+remark Allow NTP to Cyberdyne_T800
+permit udp 10.20.0.64 0.0.0.63 host 10.10.4.10 eq ntp
+
+remark Block access to internal networks
+deny ip 10.20.0.64 0.0.0.63 10.0.0.0 0.255.255.255
+
+remark Allow HTTP
+permit tcp 10.20.0.64 0.0.0.63 any eq www
+
+remark Allow HTTPS
+permit tcp 10.20.0.64 0.0.0.63 any eq 443
+
+remark Allow SMTP
+permit tcp 10.20.0.64 0.0.0.63 any eq smtp
+permit tcp 10.20.0.64 0.0.0.63 any eq 465
+permit tcp 10.20.0.64 0.0.0.63 any eq 587
+
+remark Allow POP3
+permit tcp 10.20.0.64 0.0.0.63 any eq pop3
+permit tcp 10.20.0.64 0.0.0.63 any eq 995
+
+remark Allow IMAP
+permit tcp 10.20.0.64 0.0.0.63 any eq 143
+permit tcp 10.20.0.64 0.0.0.63 any eq 993
+
+remark Deny everything else
+deny ip any any
+
+interface Vlan30
+ip access-group CBR-GUEST-IN in
+
+do show access-lists CBR-GUEST-IN
+do show ip interface Vlan30
+
+####STAFF####
+
+ip access-list extended CBR-STAFF-IN
+
+remark Allow DHCP
+permit udp any eq bootpc any eq bootps
+
+remark Block CBR Guest
+deny ip 10.20.0.0 0.0.0.63 10.20.0.64 0.0.0.63
+
+remark Block CBR Restricted
+deny ip 10.20.0.0 0.0.0.63 10.20.0.128 0.0.0.63
+
+remark Block CBR IT Admin
+deny ip 10.20.0.0 0.0.0.63 10.20.1.0 0.0.0.7
+
+remark Block CBR Management
+deny ip 10.20.0.0 0.0.0.63 10.20.1.8 0.0.0.7
+
+remark Block SYD Guest
+deny ip 10.20.0.0 0.0.0.63 10.10.4.128 0.0.0.127
+
+remark Block SYD Restricted
+deny ip 10.20.0.0 0.0.0.63 10.10.5.0 0.0.0.127
+
+remark Block SYD IT Admin
+deny ip 10.20.0.0 0.0.0.63 10.10.5.192 0.0.0.63
+
+remark Block SYD Management
+deny ip 10.20.0.0 0.0.0.63 10.10.6.64 0.0.0.7
+
+remark Allow permitted internal resources
+permit ip 10.20.0.0 0.0.0.63 10.0.0.0 0.255.255.255
+
+remark Allow ICMP
+permit icmp 10.20.0.0 0.0.0.63 any
+
+remark Allow HTTP
+permit tcp 10.20.0.0 0.0.0.63 any eq www
+
+remark Allow HTTPS
+permit tcp 10.20.0.0 0.0.0.63 any eq 443
+
+remark Allow FTP
+permit tcp 10.20.0.0 0.0.0.63 any eq ftp
+
+remark Allow SMTP
+permit tcp 10.20.0.0 0.0.0.63 any eq smtp
+permit tcp 10.20.0.0 0.0.0.63 any eq 465
+permit tcp 10.20.0.0 0.0.0.63 any eq 587
+
+remark Allow POP3
+permit tcp 10.20.0.0 0.0.0.63 any eq pop3
+permit tcp 10.20.0.0 0.0.0.63 any eq 995
+
+remark Allow IMAP
+permit tcp 10.20.0.0 0.0.0.63 any eq 143
+permit tcp 10.20.0.0 0.0.0.63 any eq 993
+remark Deny everything else
+deny ip any any
+
+interface Vlan10
+ip access-group CBR-STAFF-IN in
+
+do show access-lists CBR-STAFF-IN
+do show ip interface Vlan10
+
+####ITADMIN####
+
+ip access-list extended CBR-ITADMIN-IN
+
+remark Allow DHCP
+permit udp any eq bootpc any eq bootps
+
+remark Allow full access to internal networks
+permit ip 10.20.1.0 0.0.0.7 10.0.0.0 0.255.255.255
+
+remark Allow ICMP for diagnostics
+permit icmp 10.20.1.0 0.0.0.7 any
+
+remark Allow HTTP
+permit tcp 10.20.1.0 0.0.0.7 any eq www
+
+remark Allow HTTPS
+permit tcp 10.20.1.0 0.0.0.7 any eq 443
+
+remark Allow FTP
+permit tcp 10.20.1.0 0.0.0.7 any eq ftp
+
+remark Allow SSH
+permit tcp 10.20.1.0 0.0.0.7 any eq 22
+
+remark Allow SMTP
+permit tcp 10.20.1.0 0.0.0.7 any eq smtp
+permit tcp 10.20.1.0 0.0.0.7 any eq 465
+permit tcp 10.20.1.0 0.0.0.7 any eq 587
+
+remark Allow POP3
+permit tcp 10.20.1.0 0.0.0.7 any eq pop3
+permit tcp 10.20.1.0 0.0.0.7 any eq 995
+
+remark Allow IMAP
+permit tcp 10.20.1.0 0.0.0.7 any eq 143
+permit tcp 10.20.1.0 0.0.0.7 any eq 993
+
+remark Deny everything else
+deny ip any any
+
+interface Vlan60
+ip access-group CBR-ITADMIN-IN in
+
+do show access-lists CBR-ITADMIN-IN
+do show ip interface Vlan60
+
+####EXEC####
+
+ip access-list extended CBR-EXEC-IN
+
+remark Allow DHCP
+permit udp any eq bootpc any eq bootps
+
+remark Allow DNS to Cyberdyne_T800
+permit udp 10.20.0.240 0.0.0.15 host 10.10.4.10 eq domain
+permit tcp 10.20.0.240 0.0.0.15 host 10.10.4.10 eq domain
+
+remark Allow NTP to Cyberdyne_T800
+permit udp 10.20.0.240 0.0.0.15 host 10.10.4.10 eq ntp
+
+remark Allow Sydney server infrastructure
+permit ip 10.20.0.240 0.0.0.15 10.10.4.0 0.0.0.127
+
+remark Allow Canberra server infrastructure
+permit ip 10.20.0.240 0.0.0.15 10.20.0.224 0.0.0.15
+
+remark Allow Sydney shared devices
+permit ip 10.20.0.240 0.0.0.15 10.10.5.128 0.0.0.63
+
+remark Allow Canberra shared devices
+permit ip 10.20.0.240 0.0.0.15 10.20.0.192 0.0.0.31
+
+remark Block all other internal networks
+deny ip 10.20.0.240 0.0.0.15 10.0.0.0 0.255.255.255
+
+remark Allow ICMP to external destinations
+permit icmp 10.20.0.240 0.0.0.15 any
+
+remark Allow HTTP
+permit tcp 10.20.0.240 0.0.0.15 any eq www
+
+remark Allow HTTPS
+permit tcp 10.20.0.240 0.0.0.15 any eq 443
+
+remark Allow SMTP
+permit tcp 10.20.0.240 0.0.0.15 any eq smtp
+permit tcp 10.20.0.240 0.0.0.15 any eq 465
+permit tcp 10.20.0.240 0.0.0.15 any eq 587
+
+remark Allow POP3
+permit tcp 10.20.0.240 0.0.0.15 any eq pop3
+permit tcp 10.20.0.240 0.0.0.15 any eq 995
+
+remark Allow IMAP
+permit tcp 10.20.0.240 0.0.0.15 any eq 143
+permit tcp 10.20.0.240 0.0.0.15 any eq 993
+
+remark Deny everything else
+deny ip any any
+
+interface Vlan70
+ip access-group CBR-EXEC-IN in
+
+do show access-lists CBR-EXEC-IN
+do show ip interface Vlan70
+
+####MANAGEMENT ACCESS####
+
+ip access-list standard CBR-MGMT-ACCESS
+
+remark Permit Sydney IT Admin subnet
+permit 10.10.5.192 0.0.0.63
+
+remark Permit Canberra IT Admin subnet
+permit 10.20.1.0 0.0.0.7
+
+remark Deny all other management sources
+deny any
+
+
+#############################NTP################################################
+
+ntp server 10.10.4.10
+
+clock timezone AEST 10 0
+clock summer-time AEDT recurring 1 Sun Oct 2:00 1 Sun Apr 3:00 60
+#################################################################################
+
+end
+
+
+#################################################################################

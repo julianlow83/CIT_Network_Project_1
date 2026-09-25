@@ -1,0 +1,162 @@
+######################SYD-SW2 NETWORKING PROJECT 1 Sydney L2 Switch#############
+
+hostname SYD-SW2
+no ip domain lookup
+
+enable secret Password01
+
+ip domain name cyberdyne.com
+ip ssh version 2
+
+username admin privilege 15 secret Password01
+
+aaa authentication login SSH-LOCAL local
+
+ip access-list standard SYD-MGMT-ACCESS
+permit 10.10.5.192 0.0.0.63
+permit 10.20.1.0 0.0.0.7
+25 permit host 10.10.4.10
+deny any
+
+line vty 0 4
+login authentication SSH-LOCAL
+transport input ssh
+access-class SYD-MGMT-ACCESS in
+
+line vty 5 15
+login authentication SSH-LOCAL
+transport input ssh
+access-class SYD-MGMT-ACCESS in
+
+ip access-list standard SYD-MGMT-ACCESS
+27 permit host 10.10.4.20
+
+#############################LINK TO SYD-SW1####################################
+
+interface range GigabitEthernet1/0/1 - 2
+description LACP_MEMBERS_TO_SYD-SW1
+switchport mode trunk
+channel-group 1 mode active
+no shutdown
+
+
+interface Port-channel1
+description TRUNK_TO_SYD-SW1
+switchport mode trunk
+switchport trunk allowed vlan 10,20,30,40,50,60,70,99
+no shutdown
+
+interface Port-channel1
+switchport trunk native vlan 998
+
+##show etherchannel summary##
+##show interfaces trunk##
+
+#############################VLAN CONFIGURATION#################################
+
+vlan 10
+name STAFF
+
+vlan 20
+name SERVER-INFRA
+
+vlan 30
+name GUEST
+
+vlan 40
+name RESTRICTED
+
+vlan 50
+name DEVICES
+
+vlan 60
+name ITADMIN
+
+vlan 70
+name EXEC
+
+vlan 99
+name MANAGEMENT
+
+vlan 998
+name NATIVE
+
+vlan 999
+name BLACKHOLE
+
+#############################MANAGEMENT#########################################
+
+interface Vlan99
+description SWITCH_MANAGEMENT
+ip address 10.10.6.66 255.255.255.248
+no shutdown
+exit
+
+ip default-gateway 10.10.6.65
+
+##show ip interface brief | include Vlan99##
+
+#############################ACCESS PORTS########################################
+
+interface GigabitEthernet1/0/3
+description 8021X_WS-SYD_PORT
+switchport access vlan 40
+switchport mode access
+authentication open
+authentication event fail action authorize vlan 40
+authentication event no-response action authorize vlan 40
+authentication port-control auto
+dot1x pae authenticator
+spanning-tree portfast
+spanning-tree bpduguard enable
+
+#############################UNUSED PORTS########################################
+
+interface range GigabitEthernet1/0/4 - 24
+description UNUSED
+switchport mode access
+switchport access vlan 999
+shutdown
+
+interface range GigabitEthernet1/1/1 - 4
+description UNUSED
+switchport mode access
+switchport access vlan 999
+shutdown
+
+##show vlan brief##
+##show interfaces trunk##
+
+#############################SPANNING TREE#######################################
+
+spanning-tree vlan 10,20,30,40,50,60,70,99,998,999 root secondary
+
+interface GigabitEthernet1/0/3
+spanning-tree portfast
+spanning-tree bpduguard enable
+
+#################################RADIUS CONFIG###################################
+
+aaa new-model
+aaa authentication dot1x default group radius
+aaa authorization network default group radius
+aaa session-id common
+aaa authorization exec default local
+
+radius server CYBERDYNE-NPS
+address ipv4 10.10.4.10 auth-port 1812 acct-port 1813
+key Password01
+
+ip radius source-interface Vlan99
+
+dot1x system-auth-control
+
+
+
+#############################NTP#################################################
+
+ntp server 10.10.4.10
+
+clock timezone AEST 10 0
+clock summer-time AEDT recurring 1 Sun Oct 2:00 1 Sun Apr 3:00 60
+

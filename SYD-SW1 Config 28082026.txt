@@ -1,0 +1,538 @@
+######################SYD-SW1 NETWORKING PROJECT 1 Sydney L3 Switch#############
+
+en
+conf t
+
+hostname SYD-SW1
+
+enable secret Password01
+
+ip domain name cyberdyne.com
+
+username admin privilege 15 secret Password01
+crypto key generate rsa modulus 2048
+
+ip ssh version 2
+
+aaa authentication login SSH-LOCAL local
+line vty 0 4
+login authentication SSH-LOCAL
+transport input ssh
+access-class SYD-MGMT-ACCESS in
+
+line vty 5 15
+login authentication SSH-LOCAL
+transport input ssh
+access-class SYD-MGMT-ACCESS in
+
+ip access-list standard SYD-MGMT-ACCESS
+27 permit host 10.10.4.20
+
+#############################ACCESS PORTS#######################################
+
+interface GigabitEthernet1/0/8
+description ARUBA-AP-GUEST-WIFI
+switchport mode access
+switchport access vlan 30
+spanning-tree portfast
+no shut 
+
+interface GigabitEthernet1/0/5
+description HYPERV-SERVER-VLAN20
+switchport mode access
+switchport access vlan 20
+spanning-tree portfast
+switchport port-security
+switchport port-security maximum 4
+switchport port-security violation restrict
+no shutdown
+
+#############################LAYER 3 ROUTING####################################
+
+ip routing
+
+#############################LINK TO SYD-GW#####################################
+
+interface range G1/0/1 - 2
+description LACP_MEMBERS_TO_SYD-GW
+no switchport
+channel-group 2 mode active
+no shutdown
+exit
+
+interface Port-channel2
+description P2P_TRANSIT_TO_SYD-GW
+no switchport
+ip address 10.10.15.253 255.255.255.252
+no shutdown
+exit
+
+#############################LINK TO SYD-SW2####################################
+
+interface range GigabitEthernet1/0/3 - 4
+description LACP_MEMBERS_TO_SYD-SW2
+switchport mode trunk
+channel-group 1 mode active
+no shutdown
+
+interface Port-channel1
+description TRUNK_TO_SYD-SW2
+switchport mode trunk
+switchport trunk allowed vlan 10,20,30,40,50,60,70,99
+no shutdown
+
+interface Port-channel1
+switchport trunk native vlan 998
+
+##show etherchannel summary##
+##show interfaces trunk##
+
+#############################OSPF ROUTING########################################
+
+interface Port-channel2
+ip ospf 1 area 0
+exit
+
+router ospf 1
+router-id 3.3.3.3
+passive-interface default
+no passive-interface Port-channel2
+log-adjacency-changes
+
+interface Vlan10
+ip ospf 1 area 0
+
+interface Vlan20
+ip ospf 1 area 0
+
+interface Vlan30
+ip ospf 1 area 0
+
+interface Vlan40
+ip ospf 1 area 0
+
+interface Vlan50
+ip ospf 1 area 0
+
+interface Vlan60
+ip ospf 1 area 0
+
+interface Vlan70
+ip ospf 1 area 0
+
+interface Vlan99
+ip ospf 1 area 0
+
+#############################VLAN CONFIGURATION#################################
+
+vlan 10
+name STAFF
+
+vlan 20
+name SERVER-INFRA
+
+vlan 30
+name GUEST
+
+vlan 40
+name RESTRICTED
+
+vlan 50
+name DEVICES
+
+vlan 60
+name ITADMIN
+
+vlan 70
+name EXEC
+
+vlan 99
+name MANAGEMENT
+
+vlan 998
+name NATIVE
+
+vlan 999
+name BLACKHOLE
+
+#############################SVI / INTER-VLAN ROUTING############################
+
+interface Vlan10
+description STAFF_GATEWAY
+ip address 10.10.0.1 255.255.252.0
+no shutdown
+
+interface Vlan20
+description SERVER_INFRA_GATEWAY
+ip address 10.10.4.1 255.255.255.128
+no shutdown
+
+interface Vlan30
+description GUEST_GATEWAY
+ip address 10.10.4.129 255.255.255.128
+no shutdown
+
+interface Vlan40
+description RESTRICTED_GATEWAY
+ip address 10.10.5.1 255.255.255.128
+no shutdown
+
+interface Vlan50
+description DEVICES_GATEWAY
+ip address 10.10.5.129 255.255.255.192
+no shutdown
+
+interface Vlan60
+description ITADMIN_GATEWAY
+ip address 10.10.5.193 255.255.255.192
+no shutdown
+
+interface Vlan70
+description EXEC_GATEWAY
+ip address 10.10.6.1 255.255.255.192
+no shutdown
+
+interface Vlan99
+description MANAGEMENT_GATEWAY
+ip address 10.10.6.65 255.255.255.248
+no shutdown
+
+##show vlan brief##
+##show ip interface brief##
+
+#############################ACCESS PORTS########################################
+
+interface GigabitEthernet1/0/5
+description CYBERDYNE_T800_DC_DNS_NPS
+switchport mode access
+switchport access vlan 20
+spanning-tree portfast
+spanning-tree bpduguard enable
+no shutdown
+
+interface GigabitEthernet1/0/6
+description CYBERDYNE_ACCESS_TERMINAL
+switchport mode access
+switchport access vlan 20
+spanning-tree portfast
+spanning-tree bpduguard enable
+no shutdown
+
+#####TEST INTERFACE#####
+
+interface GigabitEthernet1/0/7
+description 8021X_TEST_PORT
+switchport access vlan 40
+switchport mode access
+authentication event fail action authorize vlan 40
+authentication port-control auto
+dot1x pae authenticator
+spanning-tree portfast
+spanning-tree bpduguard enable
+
+
+#####IGNOR FOR NOW#####
+interface GigabitEthernet1/0/7
+description ACL_TEST_PORT
+switchport mode access
+switchport access vlan 10
+spanning-tree portfast
+spanning-tree bpduguard enable
+no shutdown
+
+
+#############################UNUSED PORTS########################################
+
+interface range GigabitEthernet1/0/8 - 24
+description UNUSED
+switchport mode access
+switchport access vlan 999
+shutdown
+
+interface range GigabitEthernet1/1/1 - 4
+description UNUSED
+switchport mode access
+switchport access vlan 999
+shutdown
+
+#############################SPANNING TREE#######################################
+
+spanning-tree vlan 10,20,30,40,50,60,70,99,998,999 root primary
+
+#############################DHCP RELAY##########################################
+
+interface Vlan10
+ip helper-address 10.20.15.254
+
+interface Vlan30
+ip helper-address 10.20.15.254
+
+interface Vlan40
+ip helper-address 10.20.15.254
+
+interface Vlan50
+ip helper-address 10.20.15.254
+
+interface Vlan60
+ip helper-address 10.20.15.254
+
+interface Vlan70
+ip helper-address 10.20.15.254
+
+#############################NTP#################################################
+
+ntp server 10.10.4.10
+
+clock timezone AEST 10 0
+clock summer-time AEDT recurring 1 Sun Oct 2:00 1 Sun Apr 3:00 60
+
+#############################LAYER 3 ACLS########################################
+
+####RESTRICTED####
+ip access-list extended SYD-RESTRICTED-IN
+remark Allow DHCP requests to reach central DHCP server
+permit udp any eq bootpc any eq bootps
+remark Block Restricted VLAN from routing outside its VLAN
+deny ip 10.10.5.0 0.0.0.127 any
+
+interface Vlan40
+ip access-group SYD-RESTRICTED-IN in
+
+####GUEST####
+ip access-list extended SYD-GUEST-IN
+
+remark Allow DHCP
+permit udp any eq bootpc any eq bootps
+
+remark Allow DNS to Cyberdyne server
+permit udp 10.10.4.128 0.0.0.127 host 10.10.4.10 eq domain
+permit tcp 10.10.4.128 0.0.0.127 host 10.10.4.10 eq domain
+
+remark Allow NTP to Cyberdyne server
+permit udp 10.10.4.128 0.0.0.127 host 10.10.4.10 eq ntp
+
+remark Block access to all internal networks
+deny ip 10.10.4.128 0.0.0.127 10.0.0.0 0.255.255.255
+
+remark Allow HTTP and HTTPS to Internet
+permit tcp 10.10.4.128 0.0.0.127 any eq www
+permit tcp 10.10.4.128 0.0.0.127 any eq 443
+
+remark Allow common Internet email services
+permit tcp 10.10.4.128 0.0.0.127 any eq smtp
+permit tcp 10.10.4.128 0.0.0.127 any eq 465
+permit tcp 10.10.4.128 0.0.0.127 any eq 587
+permit tcp 10.10.4.128 0.0.0.127 any eq pop3
+permit tcp 10.10.4.128 0.0.0.127 any eq 995
+permit tcp 10.10.4.128 0.0.0.127 any eq imap
+permit tcp 10.10.4.128 0.0.0.127 any eq 993
+
+remark Deny everything else
+deny ip any any
+
+interface Vlan30
+ip access-group SYD-GUEST-IN in
+
+####STAFF####
+ip access-list extended SYD-STAFF-IN
+
+remark Allow DHCP
+permit udp any eq bootpc any eq bootps
+
+remark Block SYD Guest
+deny ip 10.10.0.0 0.0.3.255 10.10.4.128 0.0.0.127
+
+remark Block SYD Restricted
+deny ip 10.10.0.0 0.0.3.255 10.10.5.0 0.0.0.127
+
+remark Block SYD IT Admin
+deny ip 10.10.0.0 0.0.3.255 10.10.5.192 0.0.0.63
+
+remark Block SYD Management
+deny ip 10.10.0.0 0.0.3.255 10.10.6.64 0.0.0.7
+
+remark Block CBR Guest
+deny ip 10.10.0.0 0.0.3.255 10.20.0.64 0.0.0.63
+
+remark Block CBR Restricted
+deny ip 10.10.0.0 0.0.3.255 10.20.0.128 0.0.0.63
+
+remark Block CBR IT Admin
+deny ip 10.10.0.0 0.0.3.255 10.20.1.0 0.0.0.7
+
+remark Block CBR Management
+deny ip 10.10.0.0 0.0.3.255 10.20.1.8 0.0.0.7
+
+remark Allow other internal resources
+permit ip 10.10.0.0 0.0.3.255 10.0.0.0 0.255.255.255
+
+remark Allow ICMP for diagnostics
+permit icmp 10.10.0.0 0.0.3.255 any
+
+remark Allow HTTP and HTTPS
+permit tcp 10.10.0.0 0.0.3.255 any eq www
+permit tcp 10.10.0.0 0.0.3.255 any eq 443
+
+remark Allow FTP
+permit tcp 10.10.0.0 0.0.3.255 any eq ftp
+
+remark Allow common email services
+permit tcp 10.10.0.0 0.0.3.255 any eq smtp
+permit tcp 10.10.0.0 0.0.3.255 any eq 465
+permit tcp 10.10.0.0 0.0.3.255 any eq 587
+permit tcp 10.10.0.0 0.0.3.255 any eq pop3
+permit tcp 10.10.0.0 0.0.3.255 any eq 995
+permit tcp 10.10.0.0 0.0.3.255 any eq imap
+permit tcp 10.10.0.0 0.0.3.255 any eq 993
+
+remark Deny everything else
+deny ip any any
+
+
+interface Vlan10
+ip access-group SYD-STAFF-IN in
+
+####ITADMIN####
+
+ip access-list extended SYD-ITADMIN-IN
+
+remark Allow DHCP
+permit udp any eq bootpc any eq bootps
+
+remark Allow full access to internal networks
+permit ip 10.10.5.192 0.0.0.63 10.0.0.0 0.255.255.255
+
+remark Allow ICMP for diagnostics
+permit icmp 10.10.5.192 0.0.0.63 any
+
+remark Allow HTTP and HTTPS
+permit tcp 10.10.5.192 0.0.0.63 any eq www
+permit tcp 10.10.5.192 0.0.0.63 any eq 443
+
+remark Allow FTP
+permit tcp 10.10.5.192 0.0.0.63 any eq ftp
+
+remark Allow SSH
+permit tcp 10.10.5.192 0.0.0.63 any eq 22
+
+remark Allow common email services
+permit tcp 10.10.5.192 0.0.0.63 any eq smtp
+permit tcp 10.10.5.192 0.0.0.63 any eq 465
+permit tcp 10.10.5.192 0.0.0.63 any eq 587
+permit tcp 10.10.5.192 0.0.0.63 any eq pop3
+permit tcp 10.10.5.192 0.0.0.63 any eq 995
+permit tcp 10.10.5.192 0.0.0.63 any eq 143
+permit tcp 10.10.5.192 0.0.0.63 any eq 993
+
+remark Deny everything else
+deny ip any any
+
+interface Vlan60
+ip access-group SYD-ITADMIN-IN in
+
+
+####EXEC####
+
+ip access-list extended SYD-EXEC-IN
+
+remark Allow DHCP
+permit udp any eq bootpc any eq bootps
+
+remark Allow DNS to Cyberdyne_T800
+permit udp 10.10.6.0 0.0.0.63 host 10.10.4.10 eq domain
+permit tcp 10.10.6.0 0.0.0.63 host 10.10.4.10 eq domain
+
+remark Allow NTP to Cyberdyne_T800
+permit udp 10.10.6.0 0.0.0.63 host 10.10.4.10 eq ntp
+
+remark Allow Sydney server infrastructure
+permit ip 10.10.6.0 0.0.0.63 10.10.4.0 0.0.0.127
+
+remark Allow Canberra server infrastructure
+permit ip 10.10.6.0 0.0.0.63 10.20.0.224 0.0.0.15
+
+remark Allow Sydney shared devices
+permit ip 10.10.6.0 0.0.0.63 10.10.5.128 0.0.0.63
+
+remark Allow Canberra shared devices
+permit ip 10.10.6.0 0.0.0.63 10.20.0.192 0.0.0.31
+
+remark Block all other internal networks
+deny ip 10.10.6.0 0.0.0.63 10.0.0.0 0.255.255.255
+
+remark Allow ICMP to external destinations
+permit icmp 10.10.6.0 0.0.0.63 any
+
+remark Allow HTTP
+permit tcp 10.10.6.0 0.0.0.63 any eq www
+
+remark Allow HTTPS
+permit tcp 10.10.6.0 0.0.0.63 any eq 443
+
+remark Allow SMTP
+permit tcp 10.10.6.0 0.0.0.63 any eq smtp
+permit tcp 10.10.6.0 0.0.0.63 any eq 465
+permit tcp 10.10.6.0 0.0.0.63 any eq 587
+
+remark Allow POP3
+permit tcp 10.10.6.0 0.0.0.63 any eq pop3
+permit tcp 10.10.6.0 0.0.0.63 any eq 995
+
+remark Allow IMAP
+permit tcp 10.10.6.0 0.0.0.63 any eq 143
+permit tcp 10.10.6.0 0.0.0.63 any eq 993
+
+remark Deny everything else
+deny ip any any
+
+interface Vlan70
+ip access-group SYD-EXEC-IN in
+exit
+
+
+####VLAN99####
+
+ip access-list standard SYD-MGMT-ACCESS
+remark Permit Sydney IT Admin subnet
+permit 10.10.5.192 0.0.0.63
+
+remark Permit Canberra IT Admin subnet
+permit 10.20.1.0 0.0.0.7
+
+remark Permit CYBERDYNE-T800 testing server
+permit host 10.10.4.10
+
+remark Deny all other management sources
+deny any
+
+
+#################################RADIUS CONFIG###################################
+
+aaa new-model
+aaa authentication login SSH-LOCAL local
+aaa authentication dot1x default group radius
+aaa authorization exec default local
+aaa authorization network default group radius
+aaa session-id common
+
+ip radius source-interface Vlan99
+
+radius server CYBERDYNE-NPS
+address ipv4 10.10.4.10 auth-port 1812 acct-port 1813
+key Password01
+
+#####TEST INTERFACE#####
+
+interface GigabitEthernet1/0/7
+description 8021X_TEST_PORT
+switchport access vlan 40
+switchport mode access
+authentication event fail action authorize vlan 40
+authentication event no-response action authorize vlan 40
+authentication port-control auto
+dot1x pae authenticator
+spanning-tree portfast
+spanning-tree bpduguard enable
+
+
+#################################################################################
