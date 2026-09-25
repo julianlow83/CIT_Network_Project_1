@@ -1,0 +1,67 @@
+=== DNS-01 STARTED ===
+> [WS-SYD] ipconfig /all
+
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : WS-SYD
+   Primary Dns Suffix  . . . . . . . : cyberdyne.com
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+   DNS Suffix Search List. . . . . . : cyberdyne.com
+
+Ethernet adapter vEthernet (Default Switch):
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Hyper-V Virtual Ethernet Adapter
+   Physical Address. . . . . . . . . : 00-15-5D-F1-21-C6
+   DHCP Enabled. . . . . . . . . . . : No
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::23db:4bd0:aad1:48e2%18(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 172.18.16.1(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   Default Gateway . . . . . . . . . : 
+   DHCPv6 IAID . . . . . . . . . . . : 301995357
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-32-46-43-49-04-7C-16-26-C2-69
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+
+Ethernet adapter Ethernet:
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Intel(R) Ethernet Connection (14) I219-LM
+   Physical Address. . . . . . . . . : 04-7C-16-26-C2-69
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::7f2b:c790:1304:96e7%17(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 10.10.0.7(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.252.0
+   Lease Obtained. . . . . . . . . . : Friday, 25 September 2026 1:23:37 PM
+   Lease Expires . . . . . . . . . . : Saturday, 26 September 2026 1:22:33 PM
+   Default Gateway . . . . . . . . . : 10.10.0.1
+   DHCP Server . . . . . . . . . . . : 10.255.255.2
+   DHCPv6 IAID . . . . . . . . . . . : 251952150
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-32-46-43-49-04-7C-16-26-C2-69
+   DNS Servers . . . . . . . . . . . : 10.10.4.10
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+> [WS-SYD] nslookup cyberdyne.com 10.10.4.10
+DNS request timed out.
+    timeout was 2 seconds.
+Server:  UnKnown
+Address:  10.10.4.10
+
+Name:    cyberdyne.com
+Address:  10.10.4.10
+> [WS-SYD] nslookup -type=SRV _ldap._tcp.dc._msdcs.cyberdyne.com 10.10.4.10
+DNS request timed out.
+    timeout was 2 seconds.
+Server:  UnKnown
+Address:  10.10.4.10
+
+_ldap._tcp.dc._msdcs.cyberdyne.com	SRV service location:
+	  priority       = 0
+	  weight         = 100
+	  port           = 389
+	  svr hostname   = cyberdyne-t800.cyberdyne.com
+cyberdyne-t800.cyberdyne.com	internet address = 10.10.4.10
+[PASS] DNS-01 · Configured DNS=['10.10.4.10']; domain lookup=OK; AD SRV lookup=OK.
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===

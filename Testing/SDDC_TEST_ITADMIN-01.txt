@@ -1,0 +1,46 @@
+=== ITADMIN-01 STARTED ===
+> [WS-SYD] ipconfig
+
+Windows IP Configuration
+
+
+Ethernet adapter vEthernet (Default Switch):
+
+   Connection-specific DNS Suffix  . : 
+   Link-local IPv6 Address . . . . . : fe80::16ad:c786:8b5e:3bcb%18
+   IPv4 Address. . . . . . . . . . . : 172.18.16.1
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   Default Gateway . . . . . . . . . : 
+
+Ethernet adapter Ethernet:
+
+   Connection-specific DNS Suffix  . : 
+   Link-local IPv6 Address . . . . . : fe80::7f2b:c790:1304:96e7%17
+   IPv4 Address. . . . . . . . . . . : 10.10.5.196
+   Subnet Mask . . . . . . . . . . . : 255.255.255.192
+   Default Gateway . . . . . . . . . : 10.10.5.193
+> [WS-SYD] Test-Connection 10.10.6.65 -Count 2 -Quiet
+True
+> [WS-SYD] Test-Connection 10.10.6.66 -Count 2 -Quiet
+True
+> [SYD-SW1] show access-lists SYD-ITADMIN-IN
+show access-lists SYD-ITADMIN-IN
+Extended IP access list SYD-ITADMIN-IN
+    10 permit udp any eq bootpc any eq bootps
+    20 permit ip 10.10.5.192 0.0.0.63 10.0.0.0 0.255.255.255 (40 matches)
+    30 permit icmp 10.10.5.192 0.0.0.63 any
+    40 permit tcp 10.10.5.192 0.0.0.63 any eq www
+    50 permit tcp 10.10.5.192 0.0.0.63 any eq 443
+    60 permit tcp 10.10.5.192 0.0.0.63 any eq ftp
+    70 permit tcp 10.10.5.192 0.0.0.63 any eq 22
+    80 permit tcp 10.10.5.192 0.0.0.63 any eq smtp
+    90 permit tcp 10.10.5.192 0.0.0.63 any eq 465
+    100 permit tcp 10.10.5.192 0.0.0.63 any eq 587
+    110 permit tcp 10.10.5.192 0.0.0.63 any eq pop3
+    120 permit tcp 10.10.5.192 0.0.0.63 any eq 995
+    130 permit tcp 10.10.5.192 0.0.0.63 any eq 993
+    135 permit tcp 10.10.5.192 0.0.0.63 any eq 143
+    140 deny ip any any (1010 matches)
+SYD-SW1#
+[PASS] ITADMIN-01 · IPv4=['172.18.16.1', '10.10.5.196'], gateway=['10.10.5.193'], management reachability=[True, True].
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===

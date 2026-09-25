@@ -1,0 +1,325 @@
+=== VPN-01 STARTED ===
+> [SYD-GW] show interfaces Tunnel0
+show interfaces Tunnel0
+Tunnel0 is up, line protocol is up 
+  Hardware is Tunnel
+  Description: GRE_OVER_IPSEC_TO_CBR-GW
+  Internet address is 10.255.255.1/30
+  MTU 9934 bytes, BW 100 Kbit/sec, DLY 50000 usec, 
+     reliability 255/255, txload 255/255, rxload 255/255
+  Encapsulation TUNNEL, loopback not set
+  Keepalive not set
+  Tunnel linestate evaluation up
+  Tunnel source 51.41.77.6 (GigabitEthernet0/0/2), destination 209.85.143.70
+   Tunnel Subblocks:
+      src-track:
+         Tunnel0 source tracking subblock associated with GigabitEthernet0/0/2
+          Set of tunnels with source GigabitEthernet0/0/2, 1 member (includes iterators), on interface <OK>
+  Tunnel protocol/transport GRE/IP
+    Key disabled, sequencing disabled
+    Checksumming of packets disabled
+  Tunnel TTL 255, Fast tunneling enabled
+  Tunnel transport MTU 1434 bytes
+  Tunnel transmit bandwidth 8000 (kbps)
+  Tunnel receive bandwidth 8000 (kbps)
+  Tunnel protection via IPSec (profile "SYD-CBR-IPSEC-PROFILE")
+  Last input 00:00:07, output 00:00:06, output hang never
+  Last clearing of "show interface" counters 4w2d
+  Input queue: 0/375/0/0 (size/max/drops/flushes); Total output drops: 0
+  Queueing strategy: fifo
+  Output queue: 0/0 (size/max)
+  5 minute input rate 1701000 bits/sec, 156 packets/sec
+  5 minute output rate 1950000 bits/sec, 181 packets/sec
+     7355012 packets input, 8451002458 bytes, 0 no buffer
+     Received 0 broadcasts (0 IP multicasts)
+     0 runts, 0 giants, 0 throttles 
+     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+     8065619 packets output, 9479392391 bytes, 0 underruns
+     Output 0 broadcasts (0 IP multicasts)
+     0 output errors, 0 collisions, 0 interface resets
+     0 unknown protocol drops
+     0 output buffer failures, 0 output buffers swapped out
+SYD-GW#
+> [CBR-GW] show interfaces Tunnel0
+show interfaces Tunnel0
+Tunnel0 is up, line protocol is up 
+  Hardware is Tunnel
+  Description: GRE_OVER_IPSEC_TO_SYD-GW
+  Internet address is 10.255.255.2/30
+  MTU 9934 bytes, BW 100 Kbit/sec, DLY 50000 usec, 
+     reliability 255/255, txload 255/255, rxload 255/255
+  Encapsulation TUNNEL, loopback not set
+  Keepalive not set
+  Tunnel linestate evaluation up
+  Tunnel source 209.85.143.70 (GigabitEthernet0/0/2), destination 51.41.77.6
+   Tunnel Subblocks:
+      src-track:
+         Tunnel0 source tracking subblock associated with GigabitEthernet0/0/2
+          Set of tunnels with source GigabitEthernet0/0/2, 1 member (includes iterators), on interface <OK>
+  Tunnel protocol/transport GRE/IP
+    Key disabled, sequencing disabled
+    Checksumming of packets disabled
+  Tunnel TTL 255, Fast tunneling enabled
+  Tunnel transport MTU 1434 bytes
+  Tunnel transmit bandwidth 8000 (kbps)
+  Tunnel receive bandwidth 8000 (kbps)
+  Tunnel protection via IPSec (profile "CBR-SYD-IPSEC-PROFILE")
+  Last input 00:00:00, output 00:00:00, output hang never
+  Last clearing of "show interface" counters 22:23:26
+  Input queue: 0/375/0/0 (size/max/drops/flushes); Total output drops: 0
+  Queueing strategy: fifo
+  Output queue: 0/0 (size/max)
+  5 minute input rate 1865000 bits/sec, 174 packets/sec
+  5 minute output rate 1710000 bits/sec, 157 packets/sec
+     2689020 packets input, 3408969883 bytes, 0 no buffer
+     Received 0 broadcasts (0 IP multicasts)
+     0 runts, 0 giants, 0 throttles 
+     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+     2188526 packets output, 2689247201 bytes, 0 underruns
+     Output 0 broadcasts (0 IP multicasts)
+     0 output errors, 0 collisions, 0 interface resets
+     0 unknown protocol drops
+     0 output buffer failures, 0 output buffers swapped out
+CBR-GW#
+> [SYD-GW] show crypto ikev2 sa
+show crypto ikev2 sa
+ IPv4 Crypto IKEv2  SA 
+
+Tunnel-id Local                 Remote                fvrf/ivrf            Status 
+1         51.41.77.6/500        209.85.143.70/500     none/none            READY  
+      Encr: AES-CBC, keysize: 256, PRF: SHA256, Hash: SHA256, DH Grp:14, Auth sign: PSK, Auth verify: PSK
+      Life/Active Time: 86400/63350 sec
+      CE id: 1030, Session-id: 14
+      Local spi: C360B4DDD5DF8231       Remote spi: 065B4C289ADBF655
+
+ IPv6 Crypto IKEv2  SA 
+
+SYD-GW#
+> [CBR-GW] show crypto ikev2 sa
+show crypto ikev2 sa
+ IPv4 Crypto IKEv2  SA 
+
+Tunnel-id Local                 Remote                fvrf/ivrf            Status 
+2         209.85.143.70/500     51.41.77.6/500        none/none            READY  
+      Encr: AES-CBC, keysize: 256, PRF: SHA256, Hash: SHA256, DH Grp:14, Auth sign: PSK, Auth verify: PSK
+      Life/Active Time: 86400/1479 sec
+      CE id: 1003, Session-id: 2
+      Local spi: 065B4C289ADBF655       Remote spi: C360B4DDD5DF8231
+
+ IPv6 Crypto IKEv2  SA 
+
+CBR-GW#
+> [SYD-GW] show crypto ipsec sa
+show crypto ipsec sa
+
+interface: Tunnel0
+    Crypto map tag: Tunnel0-head-0, local addr 51.41.77.6
+
+   protected vrf: (none)
+   local  ident (addr/mask/prot/port): (51.41.77.6/255.255.255.255/47/0)
+   remote ident (addr/mask/prot/port): (209.85.143.70/255.255.255.255/47/0)
+   current_peer 209.85.143.70 port 500
+     PERMIT, flags={origin_is_acl,}
+    #pkts encaps: 7082911, #pkts encrypt: 7082911, #pkts digest: 7082911
+    #pkts decaps: 7205220, #pkts decrypt: 7205220, #pkts verify: 7205220
+    #pkts compressed: 0, #pkts decompressed: 0
+    #pkts not compressed: 0, #pkts compr. failed: 0
+    #pkts not decompressed: 0, #pkts decompress failed: 0
+    #send errors 0, #recv errors 0
+
+     local crypto endpt.: 51.41.77.6, remote crypto endpt.: 209.85.143.70
+     plaintext mtu 1458, path mtu 1500, ip mtu 1500, ip mtu idb GigabitEthernet0/0/2
+     current outbound spi: 0xB7F6C0AA(3086401706)
+     PFS (Y/N): N, DH group: none
+
+     inbound esp sas:
+      spi: 0xC68B3135(3331010869)
+        transform: esp-256-aes esp-sha256-hmac ,
+        in use settings ={Transport, }
+        conn id: 2536, flow_id: ESG:536, sibling_flags FFFFFFFF80004008, crypto map: Tunnel0-head-0, initiator : True
+         sa timing: remaining key lifetime (k/sec): (3131102/2121)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     inbound ah sas:
+
+     inbound pcp sas:
+
+     outbound esp sas:
+      spi: 0xB7F6C0AA(3086401706)
+        transform: esp-256-aes esp-sha256-hmac ,
+        in use settings ={Transport, }
+        conn id: 2535, flow_id: ESG:535, sibling_flags FFFFFFFF80004008, crypto map: Tunnel0-head-0, initiator : True
+         sa timing: remaining key lifetime (k/sec): (2400325/2121)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     outbound ah sas:
+
+     outbound pcp sas:
+SYD-GW#
+> [CBR-GW] show crypto ipsec sa
+show crypto ipsec sa
+
+interface: Tunnel0
+    Crypto map tag: Tunnel0-head-0, local addr 209.85.143.70
+
+   protected vrf: (none)
+   local  ident (addr/mask/prot/port): (209.85.143.70/255.255.255.255/47/0)
+   remote ident (addr/mask/prot/port): (51.41.77.6/255.255.255.255/47/0)
+   current_peer 51.41.77.6 port 500
+     PERMIT, flags={origin_is_acl,}
+    #pkts encaps: 2114055, #pkts encrypt: 2114055, #pkts digest: 2114055
+    #pkts decaps: 2665240, #pkts decrypt: 2665240, #pkts verify: 2665240
+    #pkts compressed: 0, #pkts decompressed: 0
+    #pkts not compressed: 0, #pkts compr. failed: 0
+    #pkts not decompressed: 0, #pkts decompress failed: 0
+    #send errors 0, #recv errors 0
+
+     local crypto endpt.: 209.85.143.70, remote crypto endpt.: 51.41.77.6
+     plaintext mtu 1458, path mtu 1500, ip mtu 1500, ip mtu idb GigabitEthernet0/0/2
+     current outbound spi: 0xC68B3135(3331010869)
+     PFS (Y/N): N, DH group: none
+
+     inbound esp sas:
+      spi: 0xB7F6C0AA(3086401706)
+        transform: esp-256-aes esp-sha256-hmac ,
+        in use settings ={Transport, }
+        conn id: 2015, flow_id: ESG:15, sibling_flags FFFFFFFF80000008, crypto map: Tunnel0-head-0, initiator : False
+         sa timing: remaining key lifetime (k/sec): (2359467/2121)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     inbound ah sas:
+
+     inbound pcp sas:
+
+     outbound esp sas:
+      spi: 0xC68B3135(3331010869)
+        transform: esp-256-aes esp-sha256-hmac ,
+        in use settings ={Transport, }
+        conn id: 2016, flow_id: ESG:16, sibling_flags FFFFFFFF80000008, crypto map: Tunnel0-head-0, initiator : False
+         sa timing: remaining key lifetime (k/sec): (3159644/2121)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     outbound ah sas:
+
+     outbound pcp sas:
+CBR-GW#
+> [SYD-GW] ping 10.255.255.2 repeat 100
+ping 10.255.255.2 repeat 100
+Type escape sequence to abort.
+Sending 100, 100-byte ICMP Echos to 10.255.255.2, timeout is 2 seconds:
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Success rate is 100 percent (100/100), round-trip min/avg/max = 1/1/2 ms
+SYD-GW#
+> [SYD-GW] show crypto ipsec sa
+show crypto ipsec sa
+
+interface: Tunnel0
+    Crypto map tag: Tunnel0-head-0, local addr 51.41.77.6
+
+   protected vrf: (none)
+   local  ident (addr/mask/prot/port): (51.41.77.6/255.255.255.255/47/0)
+   remote ident (addr/mask/prot/port): (209.85.143.70/255.255.255.255/47/0)
+   current_peer 209.85.143.70 port 500
+     PERMIT, flags={origin_is_acl,}
+    #pkts encaps: 7083026, #pkts encrypt: 7083026, #pkts digest: 7083026
+    #pkts decaps: 7205220, #pkts decrypt: 7205220, #pkts verify: 7205220
+    #pkts compressed: 0, #pkts decompressed: 0
+    #pkts not compressed: 0, #pkts compr. failed: 0
+    #pkts not decompressed: 0, #pkts decompress failed: 0
+    #send errors 0, #recv errors 0
+
+     local crypto endpt.: 51.41.77.6, remote crypto endpt.: 209.85.143.70
+     plaintext mtu 1458, path mtu 1500, ip mtu 1500, ip mtu idb GigabitEthernet0/0/2
+     current outbound spi: 0xB7F6C0AA(3086401706)
+     PFS (Y/N): N, DH group: none
+
+     inbound esp sas:
+      spi: 0xC68B3135(3331010869)
+        transform: esp-256-aes esp-sha256-hmac ,
+        in use settings ={Transport, }
+        conn id: 2536, flow_id: ESG:536, sibling_flags FFFFFFFF80004008, crypto map: Tunnel0-head-0, initiator : True
+         sa timing: remaining key lifetime (k/sec): (3131102/2120)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     inbound ah sas:
+
+     inbound pcp sas:
+
+     outbound esp sas:
+      spi: 0xB7F6C0AA(3086401706)
+        transform: esp-256-aes esp-sha256-hmac ,
+        in use settings ={Transport, }
+        conn id: 2535, flow_id: ESG:535, sibling_flags FFFFFFFF80004008, crypto map: Tunnel0-head-0, initiator : True
+         sa timing: remaining key lifetime (k/sec): (2400313/2120)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     outbound ah sas:
+
+     outbound pcp sas:
+SYD-GW#
+> [CBR-GW] show crypto ipsec sa
+show crypto ipsec sa
+
+interface: Tunnel0
+    Crypto map tag: Tunnel0-head-0, local addr 209.85.143.70
+
+   protected vrf: (none)
+   local  ident (addr/mask/prot/port): (209.85.143.70/255.255.255.255/47/0)
+   remote ident (addr/mask/prot/port): (51.41.77.6/255.255.255.255/47/0)
+   current_peer 51.41.77.6 port 500
+     PERMIT, flags={origin_is_acl,}
+    #pkts encaps: 2114055, #pkts encrypt: 2114055, #pkts digest: 2114055
+    #pkts decaps: 2665240, #pkts decrypt: 2665240, #pkts verify: 2665240
+    #pkts compressed: 0, #pkts decompressed: 0
+    #pkts not compressed: 0, #pkts compr. failed: 0
+    #pkts not decompressed: 0, #pkts decompress failed: 0
+    #send errors 0, #recv errors 0
+
+     local crypto endpt.: 209.85.143.70, remote crypto endpt.: 51.41.77.6
+     plaintext mtu 1458, path mtu 1500, ip mtu 1500, ip mtu idb GigabitEthernet0/0/2
+     current outbound spi: 0xC68B3135(3331010869)
+     PFS (Y/N): N, DH group: none
+
+     inbound esp sas:
+      spi: 0xB7F6C0AA(3086401706)
+        transform: esp-256-aes esp-sha256-hmac ,
+        in use settings ={Transport, }
+        conn id: 2015, flow_id: ESG:15, sibling_flags FFFFFFFF80000008, crypto map: Tunnel0-head-0, initiator : False
+         sa timing: remaining key lifetime (k/sec): (2359467/2120)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     inbound ah sas:
+
+     inbound pcp sas:
+
+     outbound esp sas:
+      spi: 0xC68B3135(3331010869)
+        transform: esp-256-aes esp-sha256-hmac ,
+        in use settings ={Transport, }
+        conn id: 2016, flow_id: ESG:16, sibling_flags FFFFFFFF80000008, crypto map: Tunnel0-head-0, initiator : False
+         sa timing: remaining key lifetime (k/sec): (3159644/2120)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     outbound ah sas:
+
+     outbound pcp sas:
+CBR-GW#
+[PASS] VPN-01 · Tunnel up/up=True; IKEv2 READY=True; tunnel ping=100%; AES-256=True; SHA-256=True; peers=True; counters={}; IPsec errors=[0, 0, 0, 0].
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===

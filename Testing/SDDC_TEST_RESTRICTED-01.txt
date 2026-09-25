@@ -1,0 +1,5 @@
+=== RESTRICTED-01 STARTED ===
+[PAUSE] RESTRICTED-01: operator input required.
+[PASS] RESTRICTED-01 · Operator confirmed the VLAN40 test produced the expected isolated behaviour.
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===
+[OPERATOR] RESTRICTED-01: COMPLETE · Pass

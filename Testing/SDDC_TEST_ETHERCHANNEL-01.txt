@@ -1,0 +1,188 @@
+=== ETHERCHANNEL-01 STARTED ===
+> [SYD-SW1] show etherchannel summary
+show etherchannel summary
+Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        H - Hot-standby (LACP only)
+        R - Layer3      S - Layer2
+        U - in use      f - failed to allocate aggregator
+
+        M - not in use, minimum links not met
+        u - unsuitable for bundling
+        w - waiting to be aggregated
+        d - default port
+
+        A - formed by Auto LAG
+
+
+Number of channel-groups in use: 2
+Number of aggregators:           2
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+1      Po1(SU)         LACP        Gi1/0/3(P)      Gi1/0/4(P)      
+2      Po2(RU)         LACP        Gi1/0/1(P)      Gi1/0/2(P)      
+
+SYD-SW1#
+> [SYD-SW2] show etherchannel summary
+show etherchannel summary
+Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        H - Hot-standby (LACP only)
+        R - Layer3      S - Layer2
+        U - in use      f - failed to allocate aggregator
+
+        M - not in use, minimum links not met
+        u - unsuitable for bundling
+        w - waiting to be aggregated
+        d - default port
+
+        A - formed by Auto LAG
+
+
+Number of channel-groups in use: 1
+Number of aggregators:           1
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+1      Po1(SU)         LACP        Gi1/0/1(P)      Gi1/0/2(P)      
+
+SYD-SW2#
+[PAUSE] ETHERCHANNEL-01: operator input required.
+> [SYD-SW1] configure terminal
+[OPERATOR] ETHERCHANNEL-01: COMPLETE
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+SYD-SW1(config)#
+> [SYD-SW1] interface GigabitEthernet1/0/3
+interface GigabitEthernet1/0/3
+SYD-SW1(config-if)#
+> [SYD-SW1] shutdown
+shutdown
+SYD-SW1(config-if)#
+> [SYD-SW1] end
+end
+SYD-SW1#
+> [SYD-SW1] show etherchannel summary
+show etherchannel summary
+Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        H - Hot-standby (LACP only)
+        R - Layer3      S - Layer2
+        U - in use      f - failed to allocate aggregator
+
+        M - not in use, minimum links not met
+        u - unsuitable for bundling
+        w - waiting to be aggregated
+        d - default port
+
+        A - formed by Auto LAG
+
+
+Number of channel-groups in use: 2
+Number of aggregators:           2
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+1      Po1(SU)         LACP        Gi1/0/3(D)      Gi1/0/4(P)      
+2      Po2(RU)         LACP        Gi1/0/1(P)      Gi1/0/2(P)      
+
+SYD-SW1#
+> [SYD-SW2] show etherchannel summary
+show etherchannel summary
+Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        H - Hot-standby (LACP only)
+        R - Layer3      S - Layer2
+        U - in use      f - failed to allocate aggregator
+
+        M - not in use, minimum links not met
+        u - unsuitable for bundling
+        w - waiting to be aggregated
+        d - default port
+
+        A - formed by Auto LAG
+
+
+Number of channel-groups in use: 1
+Number of aggregators:           1
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+1      Po1(SU)         LACP        Gi1/0/1(D)      Gi1/0/2(P)      
+
+SYD-SW2#
+> [SYD-SW1] ping 10.10.6.66 repeat 100
+ping 10.10.6.66 repeat 100
+Type escape sequence to abort.
+Sending 100, 100-byte ICMP Echos to 10.10.6.66, timeout is 2 seconds:
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Success rate is 100 percent (100/100), round-trip min/avg/max = 1/2/12 ms
+SYD-SW1#
+[PAUSE] ETHERCHANNEL-01: operator input required.
+> [SYD-SW1] configure terminal
+[OPERATOR] ETHERCHANNEL-01: COMPLETE
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+SYD-SW1(config)#
+> [SYD-SW1] interface GigabitEthernet1/0/3
+interface GigabitEthernet1/0/3
+SYD-SW1(config-if)#
+> [SYD-SW1] no shutdown
+no shutdown
+SYD-SW1(config-if)#
+> [SYD-SW1] end
+end
+SYD-SW1#
+> [SYD-SW1] show etherchannel summary
+show etherchannel summary
+Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        H - Hot-standby (LACP only)
+        R - Layer3      S - Layer2
+        U - in use      f - failed to allocate aggregator
+
+        M - not in use, minimum links not met
+        u - unsuitable for bundling
+        w - waiting to be aggregated
+        d - default port
+
+        A - formed by Auto LAG
+
+
+Number of channel-groups in use: 2
+Number of aggregators:           2
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+1      Po1(SU)         LACP        Gi1/0/3(P)      Gi1/0/4(P)      
+2      Po2(RU)         LACP        Gi1/0/1(P)      Gi1/0/2(P)      
+
+SYD-SW1#
+> [SYD-SW2] show etherchannel summary
+show etherchannel summary
+Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        H - Hot-standby (LACP only)
+        R - Layer3      S - Layer2
+        U - in use      f - failed to allocate aggregator
+
+        M - not in use, minimum links not met
+        u - unsuitable for bundling
+        w - waiting to be aggregated
+        d - default port
+
+        A - formed by Auto LAG
+
+
+Number of channel-groups in use: 1
+Number of aggregators:           1
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+-----------------------------------------------
+1      Po1(SU)         LACP        Gi1/0/1(P)      Gi1/0/2(P)      
+
+SYD-SW2#
+[PASS] ETHERCHANNEL-01 · EtherChannel states={'SYD-SW1': {'baseline_bundled': 2, 'outage_bundled': 1, 'restored_bundled': 2, 'baseline_po_up': True, 'outage_po_up': True, 'restored_po_up': True}, 'SYD-SW2': {'baseline_bundled': 2, 'outage_bundled': 1, 'restored_bundled': 2, 'baseline_po_up': True, 'outage_po_up': True, 'restored_po_up': True}}; ping success=100% (minimum 95%).
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===

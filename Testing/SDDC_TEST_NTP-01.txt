@@ -1,0 +1,15 @@
+=== NTP-01 STARTED ===
+> [SYD-GW] show ntp status
+show ntp status
+Clock is synchronized, stratum 2, reference is 10.10.4.10     
+nominal freq is 250.0000 Hz, actual freq is 249.9966 Hz, precision is 2**10
+ntp uptime is 259375200 (1/100 of seconds), resolution is 4016
+reference time is EE606E0E.45604248 (13:50:38.271 AEST Fri Sep 25 2026)
+clock offset is -0.4601 msec, root delay is 0.98 msec
+root dispersion is 28.56 msec, peer dispersion is 5.40 msec
+loopfilter state is 'CTRL' (Normal Controlled Loop), drift is 0.000013287 s/s
+system poll interval is 64, last update was 528 sec ago.
+SYD-GW#
+[PASS] NTP-01 · Clock synchronized=True; reference 10.10.4.10 present=True.
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===
+

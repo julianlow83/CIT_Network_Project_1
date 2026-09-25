@@ -1,0 +1,191 @@
+=== DHCP-01 STARTED ===
+> [WS-SYD] ipconfig /all
+
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : WS-SYD
+   Primary Dns Suffix  . . . . . . . : cyberdyne.com
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+   DNS Suffix Search List. . . . . . : cyberdyne.com
+
+Ethernet adapter vEthernet (Default Switch):
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Hyper-V Virtual Ethernet Adapter
+   Physical Address. . . . . . . . . : 00-15-5D-F1-21-C6
+   DHCP Enabled. . . . . . . . . . . : No
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::23db:4bd0:aad1:48e2%18(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 172.18.16.1(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   Default Gateway . . . . . . . . . : 
+   DHCPv6 IAID . . . . . . . . . . . : 301995357
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-32-46-43-49-04-7C-16-26-C2-69
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+
+Ethernet adapter Ethernet:
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Intel(R) Ethernet Connection (14) I219-LM
+   Physical Address. . . . . . . . . : 04-7C-16-26-C2-69
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::7f2b:c790:1304:96e7%17(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 10.10.0.7(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.252.0
+   Lease Obtained. . . . . . . . . . : Friday, 25 September 2026 1:23:37 PM
+   Lease Expires . . . . . . . . . . : Saturday, 26 September 2026 1:23:18 PM
+   Default Gateway . . . . . . . . . : 10.10.0.1
+   DHCP Server . . . . . . . . . . . : 10.255.255.2
+   DHCPv6 IAID . . . . . . . . . . . : 251952150
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-32-46-43-49-04-7C-16-26-C2-69
+   DNS Servers . . . . . . . . . . . : 10.10.4.10
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+> [CBR-GW] show ip dhcp binding
+show ip dhcp binding
+Bindings from all pools not associated with VRF:
+IP address      Client-ID/ 		Lease expiration 	Type       State      Interface
+		Hardware address/
+		User name
+10.10.0.7       0104.7c16.26c2.69       Sep 25 2026 08:12 PM    Automatic  Active     Tunnel0
+10.20.0.2       0104.7c16.24d6.ec       Sep 26 2026 01:43 PM    Automatic  Active     Port-channel1
+CBR-GW#
+> [CBR-GW] show ip dhcp pool
+show ip dhcp pool
+
+Pool SYD-STAFF :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 1022
+ Leased addresses               : 1
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.10.0.8            10.10.0.1        - 10.10.3.254       1     / 1     / 1022 
+
+Pool SYD-GUEST :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 126
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.10.4.129          10.10.4.129      - 10.10.4.254       0     / 1     / 126  
+
+Pool SYD-RESTRICTED :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 126
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.10.5.8            10.10.5.1        - 10.10.5.126       0     / 1     / 126  
+
+Pool SYD-DEVICES :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 62
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.10.5.129          10.10.5.129      - 10.10.5.190       0     / 1     / 62   
+
+Pool SYD-ITADMIN :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 62
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.10.5.196          10.10.5.193      - 10.10.5.254       0     / 1     / 62   
+
+Pool SYD-EXEC :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 62
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.10.6.4            10.10.6.1        - 10.10.6.62        0     / 1     / 62   
+
+Pool CBR-STAFF :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 62
+ Leased addresses               : 1
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.20.0.3            10.20.0.1        - 10.20.0.62        1     / 1     / 62   
+
+Pool CBR-GUEST :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 62
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.20.0.65           10.20.0.65       - 10.20.0.126       0     / 1     / 62   
+
+Pool CBR-RESTRICTED :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 62
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.20.0.129          10.20.0.129      - 10.20.0.190       0     / 1     / 62   
+
+Pool CBR-DEVICES :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 30
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.20.0.193          10.20.0.193      - 10.20.0.222       0     / 1     / 30   
+
+Pool CBR-ITADMIN :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 6
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.20.1.1            10.20.1.1        - 10.20.1.6         0     / 1     / 6    
+
+Pool CBR-EXEC :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 14
+ Leased addresses               : 0
+ Excluded addresses             : 1
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased/Excluded/Total
+ 10.20.0.241          10.20.0.241      - 10.20.0.254       0     / 1     / 14   
+CBR-GW#
+[PASS] DHCP-01 · Client IPv4=10.10.0.7, STAFF subnet=True, gateway=['10.10.0.1'], DNS=['10.10.4.10'], lease found on CBR-GW=True, DHCP pool output present=True.
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===

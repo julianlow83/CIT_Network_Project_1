@@ -1,0 +1,50 @@
+SDDC Interface v2 initialised.
+Adapter: LIVE · API
+
+=== TRANSFER-01 STARTED ===
+> [CYBERDYNE-T800] $ProgressPreference = 'SilentlyContinue'
+$ErrorActionPreference = 'Stop'
+$Source = 'C:\Test\1GB-Test.bin'
+$Destination = '\\WS-CBR\TestShare\1GB-Test.bin'
+
+if (-not (Test-Path $Source)) {
+    fsutil file createnew $Source 1073741824 | Out-Null
+}
+
+$Size = (Get-Item $Source).Length
+
+$Time = Measure-Command {
+    Copy-Item $Source $Destination -Force
+}
+
+$Result = [pscustomobject]@{
+    Direction = 'SYD-to-CBR'
+    Bytes = $Size
+    Seconds = $Time.TotalSeconds
+    Kbps = [math]::Round((($Size * 8) / $Time.TotalSeconds / 1000), 2)
+}
+
+Write-Output ($Result | ConvertTo-Json -Compress)
+{"Direction":"SYD-to-CBR","Bytes":1073741824,"Seconds":37.626758,"Kbps":228293.24}
+> [WS-CBR] $ProgressPreference = 'SilentlyContinue'
+$ErrorActionPreference = 'Stop'
+$Source = 'C:\TestShare\1GB-Test.bin'
+$Destination = '\\CYBERDYNE-T800\Test\1GB-Test-Return.bin'
+
+$Size = (Get-Item $Source).Length
+
+$Time = Measure-Command {
+    Copy-Item $Source $Destination -Force
+}
+
+$Result = [pscustomobject]@{
+    Direction = 'CBR-to-SYD'
+    Bytes = $Size
+    Seconds = $Time.TotalSeconds
+    Kbps = [math]::Round((($Size * 8) / $Time.TotalSeconds / 1000), 2)
+}
+
+Write-Output ($Result | ConvertTo-Json -Compress)
+{"Direction":"CBR-to-SYD","Bytes":1073741824,"Seconds":37.6634235,"Kbps":228071.0}
+[PASS] TRANSFER-01 · Transfer results=[{'Direction': 'SYD-to-CBR', 'Bytes': 1073741824, 'Seconds': 37.626758, 'Kbps': 228293.24}, {'Direction': 'CBR-to-SYD', 'Bytes': 1073741824, 'Seconds': 37.6634235, 'Kbps': 228071.0}].
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===

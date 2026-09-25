@@ -1,0 +1,139 @@
+== OSPF-01 STARTED ===
+> [SYD-GW] show ip ospf neighbor
+show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+3.3.3.3           1   FULL/DR         00:00:37    10.10.15.253    Port-channel2
+2.2.2.2           0   FULL/  -        00:00:35    10.255.255.2    Tunnel0
+SYD-GW#
+> [CBR-GW] show ip ospf neighbor
+show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+1.1.1.1           0   FULL/  -        00:00:31    10.255.255.1    Tunnel0
+4.4.4.4           1   FULL/DR         00:00:37    10.20.15.253    Port-channel1
+CBR-GW#
+> [SYD-SW1] show ip ospf neighbor
+show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+1.1.1.1           1   FULL/BDR        00:00:38    10.10.15.254    Port-channel2
+SYD-SW1#
+> [CBR-SW1] show ip ospf neighbor
+show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   FULL/BDR        00:00:32    10.20.15.254    Port-channel1
+CBR-SW1#
+> [SYD-GW] show ip route ospf
+show ip route ospf
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+       n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       H - NHRP, G - NHRP registered, g - NHRP registration summary
+       o - ODR, P - periodic downloaded static route, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+       & - replicated local route overrides by connected
+
+Gateway of last resort is 51.41.77.5 to network 0.0.0.0
+
+      10.0.0.0/8 is variably subnetted, 14 subnets, 6 masks
+O        10.10.0.0/22 [110/2] via 10.10.15.253, 00:18:04, Port-channel2
+O        10.10.4.0/25 [110/2] via 10.10.15.253, 00:18:04, Port-channel2
+O        10.10.4.128/25 [110/2] via 10.10.15.253, 00:18:04, Port-channel2
+O        10.10.5.0/25 [110/2] via 10.10.15.253, 00:18:04, Port-channel2
+O        10.10.5.128/26 [110/2] via 10.10.15.253, 00:18:04, Port-channel2
+O        10.10.5.192/26 [110/2] via 10.10.15.253, 00:18:04, Port-channel2
+O        10.10.6.0/26 [110/2] via 10.10.15.253, 00:18:04, Port-channel2
+O        10.10.6.64/29 [110/2] via 10.10.15.253, 00:18:04, Port-channel2
+O        10.20.0.0/26 [110/1002] via 10.255.255.2, 00:13:07, Tunnel0
+O        10.20.15.252/30 [110/1001] via 10.255.255.2, 00:15:01, Tunnel0
+SYD-GW#
+> [CBR-GW] show ip route ospf
+show ip route ospf
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+       n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       H - NHRP, G - NHRP registered, g - NHRP registration summary
+       o - ODR, P - periodic downloaded static route, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+       & - replicated local route overrides by connected
+
+Gateway of last resort is 209.85.143.69 to network 0.0.0.0
+
+      10.0.0.0/8 is variably subnetted, 14 subnets, 6 masks
+O        10.10.0.0/22 [110/1002] via 10.255.255.1, 00:15:00, Tunnel0
+O        10.10.4.0/25 [110/1002] via 10.255.255.1, 00:15:00, Tunnel0
+O        10.10.4.128/25 [110/1002] via 10.255.255.1, 00:15:00, Tunnel0
+O        10.10.5.0/25 [110/1002] via 10.255.255.1, 00:15:00, Tunnel0
+O        10.10.5.128/26 [110/1002] via 10.255.255.1, 00:15:00, Tunnel0
+O        10.10.5.192/26 [110/1002] via 10.255.255.1, 00:15:00, Tunnel0
+O        10.10.6.0/26 [110/1002] via 10.255.255.1, 00:15:00, Tunnel0
+O        10.10.6.64/29 [110/1002] via 10.255.255.1, 00:15:00, Tunnel0
+O        10.10.15.252/30 [110/1001] via 10.255.255.1, 00:15:00, Tunnel0
+O        10.20.0.0/26 [110/2] via 10.20.15.253, 00:13:06, Port-channel1
+CBR-GW#
+> [SYD-SW1] show ip route ospf
+show ip route ospf
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+       n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       H - NHRP, G - NHRP registered, g - NHRP registration summary
+       o - ODR, P - periodic downloaded static route, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+       & - replicated local route overrides by connected
+
+Gateway of last resort is 10.10.15.254 to network 0.0.0.0
+
+      10.0.0.0/8 is variably subnetted, 21 subnets, 6 masks
+O        10.20.0.0/26 [110/1003] via 10.10.15.254, 00:13:07, Port-channel2
+O        10.20.15.252/30 [110/1002] via 10.10.15.254, 00:14:56, Port-channel2
+O        10.255.255.0/30 [110/1001] via 10.10.15.254, 00:15:01, Port-channel2
+SYD-SW1#
+> [CBR-SW1] show ip route ospf
+show ip route ospf
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+       n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       H - NHRP, G - NHRP registered, g - NHRP registration summary
+       o - ODR, P - periodic downloaded static route, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+       & - replicated local route overrides by connected
+
+Gateway of last resort is 10.20.15.254 to network 0.0.0.0
+
+      10.0.0.0/8 is variably subnetted, 14 subnets, 6 masks
+O        10.10.0.0/22 [110/1003] via 10.20.15.254, 00:14:56, Port-channel1
+O        10.10.4.0/25 [110/1003] via 10.20.15.254, 00:14:56, Port-channel1
+O        10.10.4.128/25 [110/1003] via 10.20.15.254, 00:14:56, Port-channel1
+O        10.10.5.0/25 [110/1003] via 10.20.15.254, 00:14:56, Port-channel1
+O        10.10.5.128/26 [110/1003] via 10.20.15.254, 00:14:56, Port-channel1
+O        10.10.5.192/26 [110/1003] via 10.20.15.254, 00:14:56, Port-channel1
+O        10.10.6.0/26 [110/1003] via 10.20.15.254, 00:14:56, Port-channel1
+O        10.10.6.64/29 [110/1003] via 10.20.15.254, 00:14:56, Port-channel1
+O        10.10.15.252/30 [110/1002] via 10.20.15.254, 00:14:56, Port-channel1
+O        10.255.255.0/30 [110/1001] via 10.20.15.254, 00:15:01, Port-channel1
+CBR-SW1#
+[PASS] OSPF-01 · FULL neighbours={'SYD-GW': True, 'CBR-GW': True, 'SYD-SW1': True, 'CBR-SW1': True}; OSPF routes present={'SYD-GW': True, 'CBR-GW': True, 'SYD-SW1': True, 'CBR-SW1': True}.
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===
+SDDC Interface Prototype v2

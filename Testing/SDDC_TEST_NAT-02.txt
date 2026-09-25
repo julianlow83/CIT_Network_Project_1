@@ -1,0 +1,74 @@
+=== NAT-02 STARTED ===
+> [WS-CBR] ipconfig
+
+Windows IP Configuration
+
+
+Ethernet adapter vEthernet (Default Switch):
+
+   Connection-specific DNS Suffix  . : 
+   Link-local IPv6 Address . . . . . : fe80::334f:8a1e:e767:6131%18
+   IPv4 Address. . . . . . . . . . . : 172.18.208.1
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   Default Gateway . . . . . . . . . : 
+
+Ethernet adapter Ethernet:
+
+   Connection-specific DNS Suffix  . : 
+   Link-local IPv6 Address . . . . . : fe80::9ca8:87bc:c3f0:40f8%13
+   IPv4 Address. . . . . . . . . . . : 10.20.0.2
+   Subnet Mask . . . . . . . . . . . : 255.255.255.192
+   Default Gateway . . . . . . . . . : 10.20.0.1
+> [CBR-GW] show ip nat statistics
+show ip nat statistics
+Total active translations: 0 (0 static, 0 dynamic; 0 extended)
+Outside interfaces:
+  GigabitEthernet0/0/2
+Inside interfaces: 
+  Port-channel1
+Hits: 27  Misses: 26
+ Reserved port setting disabled provisioned no
+Expired translations: 26
+Dynamic mappings:
+-- Inside Source
+[Id: 1] access-list CBR-PAT-SOURCES interface GigabitEthernet0/0/2 refcount 0
+nat-limit statistics:
+ max entry: max allowed 0, used 0, missed 0
+In-to-out drops: 0  Out-to-in drops: 0
+Pool stats drop: 0  Mapping stats drop: 0
+Port block alloc fail: 0
+IP alias add fail: 0
+Limit entry add fail: 0
+CBR-GW#
+> [WS-CBR] Test-Connection 17.155.127.65 -Count 2 -Quiet
+True
+> [CBR-GW] show ip nat translations
+show ip nat translations
+Pro  Inside global         Inside local          Outside local         Outside global
+icmp 209.85.143.70:1       10.20.0.2:1           17.155.127.65:1       17.155.127.65:1
+Total number of translations: 1
+
+CBR-GW#
+> [CBR-GW] show ip nat statistics
+show ip nat statistics
+Total active translations: 0 (0 static, 0 dynamic; 0 extended)
+Outside interfaces:
+  GigabitEthernet0/0/2
+Inside interfaces: 
+  Port-channel1
+Hits: 27  Misses: 26
+ Reserved port setting disabled provisioned no
+Expired translations: 26
+Dynamic mappings:
+-- Inside Source
+[Id: 1] access-list CBR-PAT-SOURCES interface GigabitEthernet0/0/2 refcount 0
+nat-limit statistics:
+ max entry: max allowed 0, used 0, missed 0
+In-to-out drops: 0  Out-to-in drops: 0
+Pool stats drop: 0  Mapping stats drop: 0
+Port block alloc fail: 0
+IP alias add fail: 0
+Limit entry add fail: 0
+CBR-GW#
+[PASS] NAT-02 · Internet reachable=True; target translation present=True; NAT hits 27->27, increased=False, counter increase required=False.
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===

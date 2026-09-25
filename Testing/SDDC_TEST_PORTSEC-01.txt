@@ -1,0 +1,19 @@
+=== PORTSEC-01 STARTED ===
+> [CBR-SW1] show port-security interface GigabitEthernet1/0/3
+show port-security interface GigabitEthernet1/0/3
+Port Security              : Enabled
+Port Status                : Secure-up
+Violation Mode             : Restrict
+Aging Time                 : 0 mins
+Aging Type                 : Absolute
+SecureStatic Address Aging : Disabled
+Maximum MAC Addresses      : 3
+Total MAC Addresses        : 3
+Configured MAC Addresses   : 0
+Sticky MAC Addresses       : 3
+Last Source Address:Vlan   : 0000.0000.0000:0
+Security Violation Count   : 0
+
+CBR-SW1#
+[PASS] PORTSEC-01 · Port status=Secure-up, max MAC=3, sticky MAC=3, violations=0.
+=== RUN FINISHED · PASS 1 / FAIL 0 / ERROR 0 ===
