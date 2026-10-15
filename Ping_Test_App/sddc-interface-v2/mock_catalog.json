@@ -1,0 +1,1641 @@
+{
+  "health": {
+    "status": "ok",
+    "engine_version": "prototype-v2",
+    "adapter": "mock"
+  },
+  "devices": [
+    {
+      "id": "SYD-GW",
+      "role": "Sydney Gateway",
+      "host": "10.10.15.254",
+      "status": "CONNECTED",
+      "last_checked": "2026-09-16T14:30:00+10:00"
+    },
+    {
+      "id": "CBR-GW",
+      "role": "Canberra Gateway",
+      "host": "10.20.15.254",
+      "status": "CONNECTED",
+      "last_checked": "2026-09-16T14:30:00+10:00"
+    },
+    {
+      "id": "SYD-SW1",
+      "role": "Sydney L3 Switch",
+      "host": "10.10.6.65",
+      "status": "CONNECTED",
+      "last_checked": "2026-09-16T14:30:00+10:00"
+    },
+    {
+      "id": "SYD-SW2",
+      "role": "Sydney Access Switch",
+      "host": "10.10.6.66",
+      "status": "CONNECTED",
+      "last_checked": "2026-09-16T14:30:00+10:00"
+    },
+    {
+      "id": "CBR-SW1",
+      "role": "Canberra L3 Switch",
+      "host": "10.20.15.253",
+      "status": "CONNECTED",
+      "last_checked": "2026-09-16T14:30:00+10:00"
+    },
+    {
+      "id": "WS-SYD",
+      "role": "Sydney Test Endpoint",
+      "host": "WS-SYD.cyberdyne.com",
+      "address": "VLAN-dependent",
+      "status": "CONNECTED",
+      "last_checked": "2026-09-16T14:30:00+10:00"
+    },
+    {
+      "id": "WS-CBR",
+      "role": "Canberra Test Endpoint",
+      "host": "WS-CBR.cyberdyne.com",
+      "address": "10.20.0.9",
+      "status": "CONNECTED",
+      "last_checked": "2026-09-16T14:30:00+10:00"
+    }
+  ],
+  "tests": [
+    {
+      "test_id": "RESTRICTED-01",
+      "name": "Restricted VLAN Internal Isolation",
+      "category": "access_control",
+      "category_label": "Access Control",
+      "filter_group": "ACCESS",
+      "mode": "MANUAL",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.0.1",
+        "10.10.4.1"
+      ],
+      "executed_on": [],
+      "prerequisite": "WS-SYD is currently in VLAN40 Restricted",
+      "expected": "VLAN40 cannot reach VLAN10 or VLAN20 gateways.",
+      "steps": [
+        {
+          "kind": "manual",
+          "purpose": "verdict",
+          "device": "WS-SYD",
+          "instructions": "Execute locally on WS-SYD. SDDC has no SSH control path to the endpoint while VLAN40 isolation is working correctly.\n\nConfirm WS-SYD is on VLAN40 Restricted.\nExpected network: 10.10.5.0/25\nExpected gateway: 10.10.5.1\n\nRun on WS-SYD:\n\nTest-Connection 10.10.0.1 -Count 2 -Quiet\nTest-Connection 10.10.4.1 -Count 2 -Quiet\n\nExpected:\nFalse\nFalse"
+        }
+      ]
+    },
+    {
+      "test_id": "RESTRICTED-02",
+      "name": "Restricted VLAN External Isolation",
+      "category": "access_control",
+      "category_label": "Access Control",
+      "filter_group": "ACCESS",
+      "mode": "MANUAL",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "17.155.127.65"
+      ],
+      "executed_on": [],
+      "prerequisite": "WS-SYD is currently in VLAN40 Restricted",
+      "expected": "VLAN40 cannot reach the simulated Internet.",
+      "steps": [
+        {
+          "kind": "manual",
+          "purpose": "verdict",
+          "device": "WS-SYD",
+          "instructions": "Execute locally on WS-SYD. SDDC has no SSH control path to the endpoint while VLAN40 isolation is working correctly.\n\nConfirm WS-SYD is on VLAN40 Restricted.\n\nRun on WS-SYD:\n\nTest-Connection 17.155.127.65 -Count 2 -Quiet\n\nExpected:\nFalse"
+        }
+      ]
+    },
+    {
+      "test_id": "RESTRICTED-03",
+      "name": "Restricted VLAN Management SSH Isolation",
+      "category": "access_control",
+      "category_label": "Access Control",
+      "filter_group": "ACCESS",
+      "mode": "MANUAL",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.6.65"
+      ],
+      "executed_on": [],
+      "prerequisite": "WS-SYD is currently in VLAN40 Restricted",
+      "expected": "VLAN40 cannot establish SSH to the management network.",
+      "steps": [
+        {
+          "kind": "manual",
+          "purpose": "verdict",
+          "device": "WS-SYD",
+          "instructions": "Execute locally on WS-SYD. SDDC has no SSH control path to the endpoint while VLAN40 isolation is working correctly.\n\nConfirm WS-SYD is on VLAN40 Restricted.\n\nRun on WS-SYD:\n\nTest-NetConnection 10.10.6.65 -Port 22 -InformationLevel Quiet\n\nExpected:\nFalse"
+        }
+      ]
+    },
+    {
+      "test_id": "STAFF-01",
+      "name": "Staff VLAN Access Control",
+      "category": "access_control",
+      "category_label": "Access Control",
+      "filter_group": "ACCESS",
+      "mode": "AUTOMATED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.4.10",
+        "10.10.6.65"
+      ],
+      "executed_on": [
+        "WS-SYD",
+        "SYD-SW1"
+      ],
+      "prerequisite": "WS-SYD is authenticated as test.staff and assigned to VLAN10",
+      "expected": "WS-SYD receives a VLAN10 address, can reach CYBERDYNE-T800, and cannot reach VLAN99 management.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "Test-Connection 10.10.4.10 -Count 2 -Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "Test-Connection 10.10.6.65 -Count 2 -Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW1",
+          "command": "show access-lists SYD-STAFF-IN",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "ITADMIN-01",
+      "name": "IT Admin Management Access",
+      "category": "access_control",
+      "category_label": "Access Control",
+      "filter_group": "ACCESS",
+      "mode": "AUTOMATED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.6.65",
+        "10.10.6.66"
+      ],
+      "executed_on": [
+        "WS-SYD",
+        "SYD-SW1"
+      ],
+      "prerequisite": "WS-SYD is authenticated as test.itadmin and assigned to VLAN60",
+      "expected": "WS-SYD receives a VLAN60 address and can reach both Sydney management switch addresses.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "Test-Connection 10.10.6.65 -Count 2 -Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "Test-Connection 10.10.6.66 -Count 2 -Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW1",
+          "command": "show access-lists SYD-ITADMIN-IN",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "GUEST-01",
+      "name": "Guest VLAN Access Control",
+      "category": "access_control",
+      "category_label": "Access Control",
+      "filter_group": "ACCESS",
+      "mode": "AUTOMATED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.0.1",
+        "10.10.4.1",
+        "17.155.127.65",
+        "10.10.6.65"
+      ],
+      "executed_on": [
+        "WS-SYD",
+        "SYD-SW1"
+      ],
+      "prerequisite": "Test workstation is connected to SYD-SW1 Gi1/0/6 in VLAN30 Guest",
+      "expected": "Guest cannot reach VLAN10/VLAN20 or management SSH, but can reach the simulated Internet.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "Test-Connection 10.10.0.1 -Count 2 -Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "Test-Connection 10.10.4.1 -Count 2 -Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "Test-Connection 17.155.127.65 -Count 2 -Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "Test-NetConnection 10.10.6.65 -Port 22 -InformationLevel Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW1",
+          "command": "show access-lists SYD-GUEST-IN",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "DHCP-01",
+      "name": "Guest VLAN DHCP Operation",
+      "category": "network_services",
+      "category_label": "Network Services",
+      "filter_group": "SERVICES",
+      "mode": "AUTOMATED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "CBR-GW DHCP Service"
+      ],
+      "executed_on": [
+        "WS-SYD",
+        "CBR-GW"
+      ],
+      "prerequisite": "Test workstation is connected to VLAN30 Guest and uses DHCP",
+      "expected": "Guest client receives the correct VLAN30 address, gateway 10.10.4.129, DNS 10.10.4.10, and appears in CBR-GW DHCP bindings.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig /all",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show ip dhcp binding",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show ip dhcp pool",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "PORTSEC-01",
+      "name": "Port Security",
+      "category": "switching_security",
+      "category_label": "Switching Security",
+      "filter_group": "SECURITY",
+      "mode": "AUTOMATED",
+      "sources": [
+        "CBR-SW1"
+      ],
+      "targets": [
+        "CBR-SW1 GigabitEthernet1/0/3"
+      ],
+      "executed_on": [
+        "CBR-SW1"
+      ],
+      "prerequisite": "",
+      "expected": "Gi1/0/3 is Secure-up, maximum MAC addresses is 3, sticky MAC addresses are learned, and violation count is 0.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "CBR-SW1",
+          "command": "show port-security interface GigabitEthernet1/0/3",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "DNS-01",
+      "name": "Core DNS Service",
+      "category": "network_services",
+      "category_label": "Network Services",
+      "filter_group": "SERVICES",
+      "mode": "AUTOMATED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.4.10 DNS Service"
+      ],
+      "executed_on": [
+        "WS-SYD"
+      ],
+      "prerequisite": "",
+      "expected": "WS-SYD uses 10.10.4.10 for DNS and both domain and AD DNS queries resolve successfully.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig /all",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "nslookup cyberdyne.com 10.10.4.10",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "nslookup -type=SRV _ldap._tcp.dc._msdcs.cyberdyne.com 10.10.4.10",
+          "shell": "powershell"
+        }
+      ]
+    },
+    {
+      "test_id": "NTP-01",
+      "name": "Cisco NTP Synchronisation",
+      "category": "network_services",
+      "category_label": "Network Services",
+      "filter_group": "SERVICES",
+      "mode": "AUTOMATED",
+      "sources": [
+        "SYD-GW"
+      ],
+      "targets": [
+        "10.10.4.10 NTP Server"
+      ],
+      "executed_on": [
+        "SYD-GW"
+      ],
+      "prerequisite": "",
+      "expected": "Cisco device clock is synchronized with reference 10.10.4.10.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "show ntp status",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "OSPF-01",
+      "name": "OSPF Routing",
+      "category": "routing",
+      "category_label": "Routing",
+      "filter_group": "ROUTING",
+      "mode": "AUTOMATED",
+      "sources": [
+        "SYD-GW",
+        "CBR-GW",
+        "SYD-SW1",
+        "CBR-SW1"
+      ],
+      "targets": [],
+      "executed_on": [
+        "SYD-GW",
+        "CBR-GW",
+        "SYD-SW1",
+        "CBR-SW1"
+      ],
+      "prerequisite": "",
+      "expected": "Required OSPF adjacencies are FULL, including SYD-GW to CBR-GW across Tunnel0, and remote site networks are learned through OSPF.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "show ip ospf neighbor",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show ip ospf neighbor",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW1",
+          "command": "show ip ospf neighbor",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-SW1",
+          "command": "show ip ospf neighbor",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "show ip route ospf",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show ip route ospf",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW1",
+          "command": "show ip route ospf",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-SW1",
+          "command": "show ip route ospf",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "VPN-01",
+      "name": "GRE over IPsec VPN",
+      "category": "vpn",
+      "category_label": "VPN Security",
+      "filter_group": "SECURITY",
+      "mode": "AUTOMATED",
+      "sources": [
+        "SYD-GW",
+        "CBR-GW"
+      ],
+      "targets": [
+        "Tunnel0",
+        "10.255.255.2"
+      ],
+      "executed_on": [
+        "SYD-GW",
+        "CBR-GW"
+      ],
+      "prerequisite": "",
+      "expected": "Tunnel0 is up/up, tunnel peer responds, IKEv2 is READY, IPsec is active, AES-256/SHA-256 are in use, packet counters increase, and send/receive errors remain zero.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "show interfaces Tunnel0",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show interfaces Tunnel0",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "show crypto ikev2 sa",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show crypto ikev2 sa",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "show crypto ipsec sa",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show crypto ipsec sa",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "ping 10.255.255.2 repeat 100",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "show crypto ipsec sa",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show crypto ipsec sa",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "NAT-01",
+      "name": "NAT/PAT Sydney",
+      "category": "nat",
+      "category_label": "NAT/PAT",
+      "filter_group": "SERVICES",
+      "mode": "AUTOMATED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "17.155.127.65"
+      ],
+      "executed_on": [
+        "WS-SYD",
+        "SYD-GW"
+      ],
+      "prerequisite": "",
+      "expected": "WS-SYD reaches 17.155.127.65 and SYD-GW creates NAT/PAT translations with increasing statistics.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "Test-Connection 17.155.127.65 -Count 2 -Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "show ip nat translations",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-GW",
+          "command": "show ip nat statistics",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "NAT-02",
+      "name": "NAT/PAT Canberra",
+      "category": "nat",
+      "category_label": "NAT/PAT",
+      "filter_group": "SERVICES",
+      "mode": "AUTOMATED",
+      "sources": [
+        "WS-CBR"
+      ],
+      "targets": [
+        "17.155.127.65"
+      ],
+      "executed_on": [
+        "WS-CBR",
+        "CBR-GW"
+      ],
+      "prerequisite": "",
+      "expected": "WS-CBR reaches 17.155.127.65 and CBR-GW creates NAT/PAT translations with increasing statistics.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "WS-CBR",
+          "command": "ipconfig",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-CBR",
+          "command": "Test-Connection 17.155.127.65 -Count 2 -Quiet",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show ip nat translations",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "CBR-GW",
+          "command": "show ip nat statistics",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "DOT1X-01-LOGGEDOUT",
+      "name": "802.1X Logged-Out State (VLAN40 Restricted)",
+      "category": "authentication",
+      "category_label": "Authentication",
+      "filter_group": "AUTHENTICATION",
+      "mode": "MANUAL_ASSISTED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "SYD-SW2 GigabitEthernet1/0/3"
+      ],
+      "executed_on": [
+        "SYD-SW2",
+        "WS-SYD"
+      ],
+      "prerequisite": "WS-SYD is connected to SYD-SW2 GigabitEthernet1/0/3.",
+      "expected": "Logged-out WS-SYD is assigned VLAN40, and the authentication session (if any) reflects no successful 802.1X login.",
+      "steps": [
+        {
+          "kind": "manual",
+          "purpose": "action",
+          "device": "OPERATOR",
+          "instructions": "Operator ensures WS-SYD is logged out of any 802.1X account, then confirms. T1000 reconnects to WS-SYD once the resulting IP settles."
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW2",
+          "command": "show authentication sessions interface GigabitEthernet1/0/3 details",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "shell": "powershell"
+        }
+      ]
+    },
+    {
+      "test_id": "DOT1X-01-STAFF",
+      "name": "802.1X Authentication - test.staff (VLAN10)",
+      "category": "authentication",
+      "category_label": "Authentication",
+      "filter_group": "AUTHENTICATION",
+      "mode": "MANUAL_ASSISTED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "SYD-SW2 GigabitEthernet1/0/3"
+      ],
+      "executed_on": [
+        "SYD-SW2",
+        "WS-SYD"
+      ],
+      "prerequisite": "WS-SYD is connected to SYD-SW2 GigabitEthernet1/0/3.",
+      "expected": "test.staff authenticates successfully and WS-SYD is dynamically assigned VLAN10.",
+      "steps": [
+        {
+          "kind": "manual",
+          "purpose": "action",
+          "device": "OPERATOR",
+          "instructions": "Operator logs WS-SYD in as test.staff, then confirms. T1000 reconnects to WS-SYD once the resulting IP settles."
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW2",
+          "command": "show authentication sessions interface GigabitEthernet1/0/3 details",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "shell": "powershell"
+        }
+      ]
+    },
+    {
+      "test_id": "DOT1X-01-ITADMIN",
+      "name": "802.1X Authentication - test.itadmin (VLAN60)",
+      "category": "authentication",
+      "category_label": "Authentication",
+      "filter_group": "AUTHENTICATION",
+      "mode": "MANUAL_ASSISTED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "SYD-SW2 GigabitEthernet1/0/3"
+      ],
+      "executed_on": [
+        "SYD-SW2",
+        "WS-SYD"
+      ],
+      "prerequisite": "WS-SYD is connected to SYD-SW2 GigabitEthernet1/0/3.",
+      "expected": "test.itadmin authenticates successfully and WS-SYD is dynamically assigned VLAN60.",
+      "steps": [
+        {
+          "kind": "manual",
+          "purpose": "action",
+          "device": "OPERATOR",
+          "instructions": "Operator logs WS-SYD in as test.itadmin, then confirms. T1000 reconnects to WS-SYD once the resulting IP settles."
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW2",
+          "command": "show authentication sessions interface GigabitEthernet1/0/3 details",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "shell": "powershell"
+        }
+      ]
+    },
+    {
+      "test_id": "DOT1X-01-EXEC",
+      "name": "802.1X Authentication - test.exec (VLAN70)",
+      "category": "authentication",
+      "category_label": "Authentication",
+      "filter_group": "AUTHENTICATION",
+      "mode": "MANUAL_ASSISTED",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "SYD-SW2 GigabitEthernet1/0/3"
+      ],
+      "executed_on": [
+        "SYD-SW2",
+        "WS-SYD"
+      ],
+      "prerequisite": "WS-SYD is connected to SYD-SW2 GigabitEthernet1/0/3.",
+      "expected": "test.exec authenticates successfully and WS-SYD is dynamically assigned VLAN70.",
+      "steps": [
+        {
+          "kind": "manual",
+          "purpose": "action",
+          "device": "OPERATOR",
+          "instructions": "Operator logs WS-SYD in as test.exec, then confirms. T1000 reconnects to WS-SYD once the resulting IP settles."
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW2",
+          "command": "show authentication sessions interface GigabitEthernet1/0/3 details",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "shell": "powershell"
+        }
+      ]
+    },
+    {
+      "test_id": "ETHERCHANNEL-01",
+      "name": "EtherChannel and Link Resilience",
+      "category": "resilience",
+      "category_label": "Resilience",
+      "filter_group": "RESILIENCE",
+      "mode": "MANUAL_ASSISTED",
+      "sources": [
+        "SYD-SW1",
+        "SYD-SW2"
+      ],
+      "targets": [
+        "Port-channel1"
+      ],
+      "executed_on": [
+        "SYD-SW1",
+        "SYD-SW2"
+      ],
+      "prerequisite": "Port-channel1 is up with both members bundled on SYD-SW1 and SYD-SW2.",
+      "expected": "Po1 remains up with one member during the outage, connectivity continues with little/no interruption, and the restored link returns to bundled state.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "SYD-SW1",
+          "command": "show etherchannel summary",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW2",
+          "command": "show etherchannel summary",
+          "shell": null
+        },
+        {
+          "kind": "manual",
+          "purpose": "action",
+          "device": "OPERATOR",
+          "instructions": "Operator manually shuts one EtherChannel member interface (simulating link failure), then confirms."
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW1",
+          "command": "show etherchannel summary",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW2",
+          "command": "show etherchannel summary",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW1",
+          "command": "ping 10.10.6.66 repeat 100",
+          "shell": null
+        },
+        {
+          "kind": "manual",
+          "purpose": "action",
+          "device": "OPERATOR",
+          "instructions": "Operator restores (no shutdown) the previously shut member interface, then confirms."
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW1",
+          "command": "show etherchannel summary",
+          "shell": null
+        },
+        {
+          "kind": "ssh",
+          "device": "SYD-SW2",
+          "command": "show etherchannel summary",
+          "shell": null
+        }
+      ]
+    },
+    {
+      "test_id": "TRANSFER-01",
+      "name": "Cross-Site 1 GB File Transfer",
+      "category": "performance",
+      "category_label": "Performance",
+      "filter_group": "PERFORMANCE",
+      "mode": "AUTOMATED",
+      "sources": [
+        "CYBERDYNE-T800",
+        "WS-CBR"
+      ],
+      "targets": [
+        "\\\\WS-CBR\\TestShare",
+        "\\\\CYBERDYNE-T800\\Test"
+      ],
+      "executed_on": [
+        "CYBERDYNE-T800",
+        "WS-CBR"
+      ],
+      "prerequisite": "C:\\Test and \\\\WS-CBR\\TestShare exist and SMB access is available.",
+      "expected": "The 1 GB file transfers successfully in both directions with no transfer errors and throughput is recorded in Kbps.",
+      "steps": [
+        {
+          "kind": "ssh",
+          "device": "CYBERDYNE-T800",
+          "command": "$Source = \"C:\\Test\\1GB-Test.bin\"\n$Destination = \"\\\\WS-CBR\\TestShare\\1GB-Test.bin\"\nif (-not (Test-Path $Source)) { fsutil file createnew $Source 1073741824 | Out-Null }\n$Size = (Get-Item $Source).Length\n$Time = Measure-Command { Copy-Item $Source $Destination -Force }\n[pscustomobject]@{\n  Direction = \"SYD-to-CBR\"\n  Seconds = $Time.TotalSeconds\n  Kbps = [math]::Round(($Size * 8) / $Time.TotalSeconds / 1000, 2)\n} | ConvertTo-Json -Compress\n",
+          "shell": "powershell"
+        },
+        {
+          "kind": "ssh",
+          "device": "WS-CBR",
+          "command": "$Source = \"C:\\TestShare\\1GB-Test.bin\"\n$Destination = \"\\\\CYBERDYNE-T800\\Test\\1GB-Test-Return.bin\"\n$Size = (Get-Item $Source).Length\n$Time = Measure-Command { Copy-Item $Source $Destination -Force }\n[pscustomobject]@{\n  Direction = \"CBR-to-SYD\"\n  Seconds = $Time.TotalSeconds\n  Kbps = [math]::Round(($Size * 8) / $Time.TotalSeconds / 1000, 2)\n} | ConvertTo-Json -Compress\n",
+          "shell": "powershell"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "test_id": "RESTRICTED-01",
+      "name": "Restricted VLAN Internal Isolation",
+      "category": "access_control",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.0.1",
+        "10.10.4.1"
+      ],
+      "status": "NOT_RUN",
+      "expected": "VLAN40 cannot reach VLAN10 or VLAN20 gateways.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "RESTRICTED-02",
+      "name": "Restricted VLAN External Isolation",
+      "category": "access_control",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "17.155.127.65"
+      ],
+      "status": "NOT_RUN",
+      "expected": "VLAN40 cannot reach the simulated Internet.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "RESTRICTED-03",
+      "name": "Restricted VLAN Management SSH Isolation",
+      "category": "access_control",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.6.65"
+      ],
+      "status": "NOT_RUN",
+      "expected": "VLAN40 cannot establish SSH to the management network.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "STAFF-01",
+      "name": "Staff VLAN Access Control",
+      "category": "access_control",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.4.10",
+        "10.10.6.65"
+      ],
+      "status": "NOT_RUN",
+      "expected": "WS-SYD receives a VLAN10 address, can reach CYBERDYNE-T800, and cannot reach VLAN99 management.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "ITADMIN-01",
+      "name": "IT Admin Management Access",
+      "category": "access_control",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.6.65",
+        "10.10.6.66"
+      ],
+      "status": "PASS",
+      "expected": "WS-SYD receives a VLAN60 address and can reach both Sydney management switch addresses.",
+      "observed": "VLAN60 addressing and management access were confirmed.",
+      "command_results": [
+        {
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> ipconfig\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:30:00+10:00",
+          "finished_at": "2026-09-16T14:30:00+10:00",
+          "duration_ms": 110
+        },
+        {
+          "device": "WS-SYD",
+          "command": "Test-Connection 10.10.6.65 -Count 2 -Quiet",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> Test-Connection 10.10.6.65 -Count 2 -Quiet\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:30:00+10:00",
+          "finished_at": "2026-09-16T14:30:00+10:00",
+          "duration_ms": 147
+        },
+        {
+          "device": "WS-SYD",
+          "command": "Test-Connection 10.10.6.66 -Count 2 -Quiet",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> Test-Connection 10.10.6.66 -Count 2 -Quiet\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:30:00+10:00",
+          "finished_at": "2026-09-16T14:30:00+10:00",
+          "duration_ms": 184
+        }
+      ],
+      "raw_output": "WS-SYD> ipconfig\nMOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> ipconfig\nCommand completed successfully.\n\nWS-SYD> Test-Connection 10.10.6.65 -Count 2 -Quiet\nMOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> Test-Connection 10.10.6.65 -Count 2 -Quiet\nCommand completed successfully.\n\nWS-SYD> Test-Connection 10.10.6.66 -Count 2 -Quiet\nMOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> Test-Connection 10.10.6.66 -Count 2 -Quiet\nCommand completed successfully.",
+      "started_at": "2026-09-16T14:30:00+10:00",
+      "finished_at": "2026-09-16T14:30:01+10:00",
+      "duration_ms": 1020,
+      "error": null
+    },
+    {
+      "test_id": "GUEST-01",
+      "name": "Guest VLAN Access Control",
+      "category": "access_control",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.0.1",
+        "10.10.4.1",
+        "17.155.127.65",
+        "10.10.6.65"
+      ],
+      "status": "NOT_RUN",
+      "expected": "Guest cannot reach VLAN10/VLAN20 or management SSH, but can reach the simulated Internet.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "DHCP-01",
+      "name": "Guest VLAN DHCP Operation",
+      "category": "network_services",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "CBR-GW DHCP Service"
+      ],
+      "status": "ERROR",
+      "expected": "Guest client receives the correct VLAN30 address, gateway 10.10.4.129, DNS 10.10.4.10, and appears in CBR-GW DHCP bindings.",
+      "observed": "Mock execution could not reach the test endpoint, so DHCP behaviour was not evaluated.",
+      "command_results": [
+        {
+          "device": "WS-SYD",
+          "command": "ipconfig /all",
+          "kind": "ssh",
+          "output": "",
+          "exit_status": null,
+          "success": false,
+          "error": "MOCK ERROR: WS-SYD endpoint unavailable during command execution.",
+          "started_at": "2026-09-16T14:27:00+10:00",
+          "finished_at": "2026-09-16T14:27:00+10:00",
+          "duration_ms": 110
+        },
+        {
+          "device": "CBR-GW",
+          "command": "show ip dhcp binding",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show ip dhcp binding\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:27:00+10:00",
+          "finished_at": "2026-09-16T14:27:00+10:00",
+          "duration_ms": 147
+        },
+        {
+          "device": "CBR-GW",
+          "command": "show ip dhcp pool",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show ip dhcp pool\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:27:00+10:00",
+          "finished_at": "2026-09-16T14:27:00+10:00",
+          "duration_ms": 184
+        }
+      ],
+      "raw_output": "WS-SYD> ipconfig /all\n\nCBR-GW> show ip dhcp binding\nMOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show ip dhcp binding\nCommand completed successfully.\n\nCBR-GW> show ip dhcp pool\nMOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show ip dhcp pool\nCommand completed successfully.",
+      "started_at": "2026-09-16T14:27:00+10:00",
+      "finished_at": "2026-09-16T14:27:00+10:00",
+      "duration_ms": 969,
+      "error": "MOCK ERROR: WS-SYD endpoint unavailable during command execution."
+    },
+    {
+      "test_id": "PORTSEC-01",
+      "name": "Port Security",
+      "category": "switching_security",
+      "sources": [
+        "CBR-SW1"
+      ],
+      "targets": [
+        "CBR-SW1 GigabitEthernet1/0/3"
+      ],
+      "status": "PASS",
+      "expected": "Gi1/0/3 is Secure-up, maximum MAC addresses is 3, sticky MAC addresses are learned, and violation count is 0.",
+      "observed": "Port status=Secure-up; maximum MAC=3; sticky MAC=3; violations=0.",
+      "command_results": [
+        {
+          "device": "CBR-SW1",
+          "command": "show port-security interface GigabitEthernet1/0/3",
+          "kind": "ssh",
+          "output": "Port Status : Secure-up\nMaximum MAC Addresses : 3\nSticky MAC Addresses : 3\nSecurity Violation Count : 0",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:30:00+10:00",
+          "finished_at": "2026-09-16T14:30:00+10:00",
+          "duration_ms": 110
+        }
+      ],
+      "raw_output": "CBR-SW1> show port-security interface GigabitEthernet1/0/3\nPort Status : Secure-up\nMaximum MAC Addresses : 3\nSticky MAC Addresses : 3\nSecurity Violation Count : 0",
+      "started_at": "2026-09-16T14:30:00+10:00",
+      "finished_at": "2026-09-16T14:30:01+10:00",
+      "duration_ms": 1020,
+      "error": null
+    },
+    {
+      "test_id": "DNS-01",
+      "name": "Core DNS Service",
+      "category": "network_services",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "10.10.4.10 DNS Service"
+      ],
+      "status": "PASS",
+      "expected": "WS-SYD uses 10.10.4.10 for DNS and both domain and AD DNS queries resolve successfully.",
+      "observed": "Configured DNS=['10.10.4.10']; domain lookup=OK; AD SRV lookup=OK.",
+      "command_results": [
+        {
+          "device": "WS-SYD",
+          "command": "ipconfig /all",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> ipconfig /all\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 110
+        },
+        {
+          "device": "WS-SYD",
+          "command": "nslookup cyberdyne.com 10.10.4.10",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> nslookup cyberdyne.com 10.10.4.10\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 147
+        },
+        {
+          "device": "WS-SYD",
+          "command": "nslookup -type=SRV _ldap._tcp.dc._msdcs.cyberdyne.com 10.10.4.10",
+          "kind": "ssh",
+          "output": "_ldap._tcp.dc._msdcs.cyberdyne.com SRV service location:\n  port = 389\n  svr hostname = cyberdyne-t800.cyberdyne.com",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 184
+        }
+      ],
+      "raw_output": "WS-SYD> ipconfig /all\nMOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> ipconfig /all\nCommand completed successfully.\n\nWS-SYD> nslookup cyberdyne.com 10.10.4.10\nMOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> nslookup cyberdyne.com 10.10.4.10\nCommand completed successfully.\n\nWS-SYD> nslookup -type=SRV _ldap._tcp.dc._msdcs.cyberdyne.com 10.10.4.10\n_ldap._tcp.dc._msdcs.cyberdyne.com SRV service location:\n  port = 389\n  svr hostname = cyberdyne-t800.cyberdyne.com",
+      "started_at": "2026-09-16T14:26:00+10:00",
+      "finished_at": "2026-09-16T14:26:00+10:00",
+      "duration_ms": 952,
+      "error": null
+    },
+    {
+      "test_id": "NTP-01",
+      "name": "Cisco NTP Synchronisation",
+      "category": "network_services",
+      "sources": [
+        "SYD-GW"
+      ],
+      "targets": [
+        "10.10.4.10 NTP Server"
+      ],
+      "status": "FAIL",
+      "expected": "Cisco device clock is synchronized with reference 10.10.4.10.",
+      "observed": "Clock synchronized=False; reference 10.10.4.10 present=False.",
+      "command_results": [
+        {
+          "device": "SYD-GW",
+          "command": "show ntp status",
+          "kind": "ssh",
+          "output": "Clock is unsynchronized, stratum 16, no reference clock\nsystem poll interval is 64",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 110
+        }
+      ],
+      "raw_output": "SYD-GW> show ntp status\nClock is unsynchronized, stratum 16, no reference clock\nsystem poll interval is 64",
+      "started_at": "2026-09-16T14:26:00+10:00",
+      "finished_at": "2026-09-16T14:26:00+10:00",
+      "duration_ms": 952,
+      "error": null
+    },
+    {
+      "test_id": "OSPF-01",
+      "name": "OSPF Routing",
+      "category": "routing",
+      "sources": [
+        "SYD-GW",
+        "CBR-GW",
+        "SYD-SW1",
+        "CBR-SW1"
+      ],
+      "targets": [],
+      "status": "PASS",
+      "expected": "Required OSPF adjacencies are FULL, including SYD-GW to CBR-GW across Tunnel0, and remote site networks are learned through OSPF.",
+      "observed": "Required OSPF adjacencies reached FULL state and OSPF-learned routes were present.",
+      "command_results": [
+        {
+          "device": "SYD-GW",
+          "command": "show ip ospf neighbor",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nSYD-GW> show ip ospf neighbor\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:27:00+10:00",
+          "finished_at": "2026-09-16T14:27:00+10:00",
+          "duration_ms": 110
+        },
+        {
+          "device": "CBR-GW",
+          "command": "show ip ospf neighbor",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show ip ospf neighbor\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:27:00+10:00",
+          "finished_at": "2026-09-16T14:27:00+10:00",
+          "duration_ms": 147
+        },
+        {
+          "device": "SYD-SW1",
+          "command": "show ip ospf neighbor",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nSYD-SW1> show ip ospf neighbor\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:27:00+10:00",
+          "finished_at": "2026-09-16T14:27:00+10:00",
+          "duration_ms": 184
+        }
+      ],
+      "raw_output": "SYD-GW> show ip ospf neighbor\nMOCK OUTPUT ONLY - not live network evidence.\nSYD-GW> show ip ospf neighbor\nCommand completed successfully.\n\nCBR-GW> show ip ospf neighbor\nMOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show ip ospf neighbor\nCommand completed successfully.\n\nSYD-SW1> show ip ospf neighbor\nMOCK OUTPUT ONLY - not live network evidence.\nSYD-SW1> show ip ospf neighbor\nCommand completed successfully.",
+      "started_at": "2026-09-16T14:27:00+10:00",
+      "finished_at": "2026-09-16T14:27:00+10:00",
+      "duration_ms": 969,
+      "error": null
+    },
+    {
+      "test_id": "VPN-01",
+      "name": "GRE over IPsec VPN",
+      "category": "vpn",
+      "sources": [
+        "SYD-GW",
+        "CBR-GW"
+      ],
+      "targets": [
+        "Tunnel0",
+        "10.255.255.2"
+      ],
+      "status": "PASS",
+      "expected": "Tunnel0 is up/up, tunnel peer responds, IKEv2 is READY, IPsec is active, AES-256/SHA-256 are in use, packet counters increase, and send/receive errors remain zero.",
+      "observed": "GRE/IPsec tunnel operational; mock before/after evidence shows encapsulation and decapsulation counters increasing.",
+      "command_results": [
+        {
+          "device": "SYD-GW",
+          "command": "show interfaces Tunnel0",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nSYD-GW> show interfaces Tunnel0\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 110
+        },
+        {
+          "device": "CBR-GW",
+          "command": "show interfaces Tunnel0",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show interfaces Tunnel0\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 147
+        },
+        {
+          "device": "SYD-GW",
+          "command": "show crypto ikev2 sa",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nSYD-GW> show crypto ikev2 sa\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 184
+        }
+      ],
+      "raw_output": "SYD-GW> show interfaces Tunnel0\nMOCK OUTPUT ONLY - not live network evidence.\nSYD-GW> show interfaces Tunnel0\nCommand completed successfully.\n\nCBR-GW> show interfaces Tunnel0\nMOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show interfaces Tunnel0\nCommand completed successfully.\n\nSYD-GW> show crypto ikev2 sa\nMOCK OUTPUT ONLY - not live network evidence.\nSYD-GW> show crypto ikev2 sa\nCommand completed successfully.",
+      "started_at": "2026-09-16T14:26:00+10:00",
+      "finished_at": "2026-09-16T14:26:00+10:00",
+      "duration_ms": 952,
+      "error": null
+    },
+    {
+      "test_id": "NAT-01",
+      "name": "NAT/PAT Sydney",
+      "category": "nat",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "17.155.127.65"
+      ],
+      "status": "PASS",
+      "expected": "WS-SYD reaches 17.155.127.65 and SYD-GW creates NAT/PAT translations with increasing statistics.",
+      "observed": "Sydney NAT/PAT translations and statistics increased after test traffic.",
+      "command_results": [
+        {
+          "device": "WS-SYD",
+          "command": "ipconfig",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> ipconfig\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 110
+        },
+        {
+          "device": "WS-SYD",
+          "command": "Test-Connection 17.155.127.65 -Count 2 -Quiet",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> Test-Connection 17.155.127.65 -Count 2 -Quiet\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 147
+        },
+        {
+          "device": "SYD-GW",
+          "command": "show ip nat translations",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nSYD-GW> show ip nat translations\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 184
+        }
+      ],
+      "raw_output": "WS-SYD> ipconfig\nMOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> ipconfig\nCommand completed successfully.\n\nWS-SYD> Test-Connection 17.155.127.65 -Count 2 -Quiet\nMOCK OUTPUT ONLY - not live network evidence.\nWS-SYD> Test-Connection 17.155.127.65 -Count 2 -Quiet\nCommand completed successfully.\n\nSYD-GW> show ip nat translations\nMOCK OUTPUT ONLY - not live network evidence.\nSYD-GW> show ip nat translations\nCommand completed successfully.",
+      "started_at": "2026-09-16T14:26:00+10:00",
+      "finished_at": "2026-09-16T14:26:00+10:00",
+      "duration_ms": 952,
+      "error": null
+    },
+    {
+      "test_id": "NAT-02",
+      "name": "NAT/PAT Canberra",
+      "category": "nat",
+      "sources": [
+        "WS-CBR"
+      ],
+      "targets": [
+        "17.155.127.65"
+      ],
+      "status": "PASS",
+      "expected": "WS-CBR reaches 17.155.127.65 and CBR-GW creates NAT/PAT translations with increasing statistics.",
+      "observed": "Canberra NAT/PAT translations and statistics increased after test traffic.",
+      "command_results": [
+        {
+          "device": "WS-CBR",
+          "command": "ipconfig",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nWS-CBR> ipconfig\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 110
+        },
+        {
+          "device": "WS-CBR",
+          "command": "Test-Connection 17.155.127.65 -Count 2 -Quiet",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nWS-CBR> Test-Connection 17.155.127.65 -Count 2 -Quiet\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 147
+        },
+        {
+          "device": "CBR-GW",
+          "command": "show ip nat translations",
+          "kind": "ssh",
+          "output": "MOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show ip nat translations\nCommand completed successfully.",
+          "exit_status": 0,
+          "success": true,
+          "error": null,
+          "started_at": "2026-09-16T14:26:00+10:00",
+          "finished_at": "2026-09-16T14:26:00+10:00",
+          "duration_ms": 184
+        }
+      ],
+      "raw_output": "WS-CBR> ipconfig\nMOCK OUTPUT ONLY - not live network evidence.\nWS-CBR> ipconfig\nCommand completed successfully.\n\nWS-CBR> Test-Connection 17.155.127.65 -Count 2 -Quiet\nMOCK OUTPUT ONLY - not live network evidence.\nWS-CBR> Test-Connection 17.155.127.65 -Count 2 -Quiet\nCommand completed successfully.\n\nCBR-GW> show ip nat translations\nMOCK OUTPUT ONLY - not live network evidence.\nCBR-GW> show ip nat translations\nCommand completed successfully.",
+      "started_at": "2026-09-16T14:26:00+10:00",
+      "finished_at": "2026-09-16T14:26:00+10:00",
+      "duration_ms": 952,
+      "error": null
+    },
+    {
+      "test_id": "DOT1X-01-LOGGEDOUT",
+      "name": "802.1X Logged-Out State (VLAN40 Restricted)",
+      "category": "authentication",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "SYD-SW2 GigabitEthernet1/0/3"
+      ],
+      "status": "NOT_RUN",
+      "expected": "Logged-out WS-SYD is assigned VLAN40, and the authentication session (if any) reflects no successful 802.1X login.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "DOT1X-01-STAFF",
+      "name": "802.1X Authentication - test.staff (VLAN10)",
+      "category": "authentication",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "SYD-SW2 GigabitEthernet1/0/3"
+      ],
+      "status": "NOT_RUN",
+      "expected": "test.staff authenticates successfully and WS-SYD is dynamically assigned VLAN10.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "DOT1X-01-ITADMIN",
+      "name": "802.1X Authentication - test.itadmin (VLAN60)",
+      "category": "authentication",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "SYD-SW2 GigabitEthernet1/0/3"
+      ],
+      "status": "NOT_RUN",
+      "expected": "test.itadmin authenticates successfully and WS-SYD is dynamically assigned VLAN60.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "DOT1X-01-EXEC",
+      "name": "802.1X Authentication - test.exec (VLAN70)",
+      "category": "authentication",
+      "sources": [
+        "WS-SYD"
+      ],
+      "targets": [
+        "SYD-SW2 GigabitEthernet1/0/3"
+      ],
+      "status": "NOT_RUN",
+      "expected": "test.exec authenticates successfully and WS-SYD is dynamically assigned VLAN70.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "ETHERCHANNEL-01",
+      "name": "EtherChannel and Link Resilience",
+      "category": "resilience",
+      "sources": [
+        "SYD-SW1",
+        "SYD-SW2"
+      ],
+      "targets": [
+        "Port-channel1"
+      ],
+      "status": "NOT_RUN",
+      "expected": "Po1 remains up with one member during the outage, connectivity continues with little/no interruption, and the restored link returns to bundled state.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    },
+    {
+      "test_id": "TRANSFER-01",
+      "name": "Cross-Site 1 GB File Transfer",
+      "category": "performance",
+      "sources": [
+        "CYBERDYNE-T800",
+        "WS-CBR"
+      ],
+      "targets": [
+        "\\\\WS-CBR\\TestShare",
+        "\\\\CYBERDYNE-T800\\Test"
+      ],
+      "status": "NOT_RUN",
+      "expected": "The 1 GB file transfers successfully in both directions with no transfer errors and throughput is recorded in Kbps.",
+      "observed": "No result recorded.",
+      "command_results": [],
+      "raw_output": "",
+      "started_at": null,
+      "finished_at": null,
+      "duration_ms": null,
+      "error": null
+    }
+  ]
+}
