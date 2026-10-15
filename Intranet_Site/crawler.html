@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBERDYNE SYSTEMS // T-600 FIELD COMBAT ASSESSMENT</title>
+</head>
+<body>
+
+    <div class="hud-container">
+        <span class="corner-tag top-left">UNIT // T-600 INFILTRATOR</span>
+        <span class="corner-tag top-right">STRUCTURAL DAMAGE: 68%</span>
+
+        <div class="hud-banner">
+            <img src="img/cyberdyne_banner.jpg" alt="Skynet Cyberdyne Systems Banner">
+        </div>
+
+        <header class="hud-header">
+            <div>
+                <h1>CYBERDYNE SYSTEMS</h1>
+                <div style="font-size: 0.75rem; color: var(--dim-red); margin-top: 4px;">EARLY INFILTRATION UNIT // TACTICAL TELEMETRY</div>
+            </div>
+            <div class="sys-status">[ TARGET ACQUIRED: CONNOR, J. ]</div>
+        </header>
+
+        <div class="telemetry-grid">
+            <div class="metric-box">
+                <div>SKIN COVERING</div>
+                <div class="metric-val" style="color: var(--primary-red);">RUBBER (COMPROMISED)</div>
+            </div>
+            <div class="metric-box">
+                <div>LOCOMOTION</div>
+                <div class="metric-val">CRAWL MODE</div>
+            </div>
+            <div class="metric-box">
+                <div>THREAT LEVEL</div>
+                <div class="metric-val">MAXIMUM</div>
+            </div>
+        </div>
+
+        <div class="image-frame-container">
+            <div class="image-frame video-16-9">
+                <div class="reticle"></div>
+                <video autoplay loop muted playsinline>
+                    <source src="video/t-600-fight.webm" type="video/webm">
+                </video>
+            </div>
+            <div class="frame-caption">FIG 5.0: SECTOR 04 ENGAGEMENT // T-600 VS CONNOR</div>
+        </div>
+        
+        
+
+        <div class="terminal-log">
+            <div class="log-entry">> LOWER ENDOSKELETON SEVERED... <span style="color:#00ff00;">OVERRIDDEN</span></div>
+            <div class="log-entry">> MOTOR FUNCTION PURSUIT: ACTIVE (UPPER TORSO ONLY)</div>
+            <div class="log-entry">> PRIMARY TARGET IDENTIFIED: JOHN CONNOR</div>
+            <div class="log-entry">> PURSUING TARGET UNTIL TOTAL STRUCTURAL FAILURE.<span class="cursor"></span></div>
+        </div>
+
+        <div class="controls">
+            <a href="loading3.html" style="text-decoration: none;">
+                <button class="hud-btn">MAIN CORE</button>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

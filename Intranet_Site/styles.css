@@ -1,0 +1,345 @@
+:root {
+            --bg-color: #0a0303;
+            --panel-bg: rgba(25, 5, 5, 0.8);
+            --primary-red: #ff1a1a;
+            --dim-red: #8b0000;
+            --text-glow: 0 0 8px rgba(255, 26, 26, 0.6);
+            --border-glow: 0 0 12px rgba(255, 26, 26, 0.35);
+            --font-stack: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--primary-red);
+            font-family: var(--font-stack);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Keeps content top-aligned when scrolling */
+            padding: 40px 0;          /* Adds breathing room at top and bottom */
+            overflow-y: auto;        /* Enables vertical scrollbar when content exceeds screen */
+        }
+
+        /* Fixed Old-School CRT Scanline Overlay */
+        body::after {
+            content: "";
+            position: fixed;           /* Pins overlay to the browser window while scrolling */
+            top: 0; 
+            left: 0; 
+            width: 100%;               /* Fills 100% of screen width without horizontal scrollbars */
+            height: 100%;              /* Locks overlay to 100% of visible viewport height */
+            background: linear-gradient(
+                rgba(0, 0, 0, 0) 50%, 
+                rgba(0, 0, 0, 0.35) 50%
+            );
+            background-size: 100% 4px; /* Creates repeating 4px horizontal CRT scanlines */
+            pointer-events: none;      /* Ensures clicks pass through to buttons and links */
+            z-index: 9999;             /* Keeps scanlines rendered on top of all page content */
+        }
+
+        /* CRT Scanline overlay */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                rgba(0, 0, 0, 0) 50%, 
+                rgba(0, 0, 0, 0.35) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Main HUD Container */
+        .hud-container {
+            width: 90%;
+            max-width: 850px;
+            background: var(--panel-bg);
+            border: 1px solid var(--primary-red);
+            box-shadow: var(--border-glow);
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Banner Frame */
+        .hud-banner {
+            width: 100%;
+            max-height: 110px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000000;
+            border: 1px solid var(--dim-red);
+            box-shadow: inset 0 0 10px rgba(255, 26, 26, 0.2);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .hud-banner img {
+            max-width: 100%;
+            max-height: 90px;
+            object-fit: contain;
+            display: block;
+            padding: 6px 0;
+        }
+
+        /* Header */
+        .hud-header {
+            border-bottom: 2px solid var(--dim-red);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .hud-header h1 {
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-shadow: var(--text-glow);
+        }
+
+        .sys-status {
+            font-size: 0.85rem;
+            color: var(--primary-red);
+            animation: pulse 2s infinite;
+        }
+
+        /* Telemetry Data Grid */
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .metric-box {
+            border: 1px solid var(--dim-red);
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .metric-val {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 4px;
+        }
+
+        /* Centered Image Frame */
+        .image-frame-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .image-frame {
+            width: 100%;
+            max-width: 380px;
+            height: 320px;
+            border: 1px solid var(--primary-red);
+            box-shadow: inset 0 0 15px rgba(255, 26, 26, 0.15), var(--border-glow);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000000;
+            overflow: hidden;
+        }
+
+        .image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Target Reticle Overlay */
+        .reticle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            height: 85%;
+            border: 1px dashed rgba(255, 26, 26, 0.4);
+            pointer-events: none;
+        }
+
+        .frame-caption {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: var(--primary-red);
+        }
+
+        /* Terminal Console Section */
+        .terminal-log {
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid var(--dim-red);
+            padding: 12px 15px;
+            margin: 20px 0;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .log-entry {
+            margin-bottom: 3px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 7px;
+            height: 14px;
+            background-color: var(--primary-red);
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
+        }
+
+        /* Control Buttons */
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .hud-btn {
+            background: transparent;
+            color: var(--primary-red);
+            border: 1px solid var(--primary-red);
+            padding: 10px 20px;
+            font-family: var(--font-stack);
+            font-weight: bold;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--border-glow);
+        }
+
+        .hud-btn:hover {
+            background: var(--primary-red);
+            color: #0a0303;
+            box-shadow: 0 0 15px rgba(255, 26, 26, 0.8);
+        }
+
+        /* HUD Corner Accents */
+        .corner-tag {
+            position: absolute;
+            font-size: 0.65rem;
+            color: var(--dim-red);
+        }
+        .top-left { top: 6px; left: 8px; }
+        .top-right { top: 6px; right: 8px; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Creates 4 equal columns */
+            gap: 10px;                            /* Reduces spacing between buttons */
+            width: 100%;
+        }
+
+        .controls a {
+            display: flex;                        /* Ensures link wrappers stretch evenly */
+        }
+
+        .controls .hud-btn {
+            width: 100%;                          /* Forces buttons to fill their grid cell */
+            padding: 10px 8px;                    /* Slightly tighter padding for fit */
+            font-size: 0.75rem;                   /* Slightly smaller text for 4-across fit */
+            text-align: center;
+        }
+
+        /* Optional: Fallback for smaller screens so buttons stack neatly */
+        @media (max-width: 600px) {
+            .controls {
+                grid-template-columns: repeat(2, 1fr); /* 4 rows of 2 on mobile */
+            }
+        }
+
+        /* Centered Image Frame */
+        .poster-frame-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .poster-frame {
+            width: 100%;
+            max-width: 560px;  /* Slightly narrower width */
+            height: 840px;     /* Increased height for a 2:3 poster aspect ratio */
+            border: 1px solid var(--primary-red);
+            box-shadow: inset 0 0 15px rgba(255, 26, 26, 0.2), var(--border-glow);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000000;
+            overflow: hidden;
+        }
+
+        .poster-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Prevents cropping or stretching */
+            display: block;
+        }
+
+        /* Custom HUD Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #08080a;
+            border-left: 1px solid var(--dim-red);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--dim-red);
+            border: 1px solid var(--primary-red);
+            box-shadow: 0 0 8px rgba(255, 26, 26, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-red);
+        }
+
+        /* Widescreen Video Frame (16:9) */
+        .image-frame.video-16-9 {
+        max-width: 560px;          /* Wider max-width for widescreen video */
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;      /* Forces standard 16:9 film aspect ratio */
+        }
+
+        /* Ensure the HTML5 video fills the HUD frame cleanly */
+        .image-frame video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;          /* Use 'cover' to fill edge-to-edge, or 'contain' to avoid cropping */
+            display: block;
+        }

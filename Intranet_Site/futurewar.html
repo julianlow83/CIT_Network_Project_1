@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBERDYNE SYSTEMS // FUTURE WAR WASTELAND TELEMETRY</title>
+    <!-- Linked to your unified CSS stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="hud-container">
+        <span class="corner-tag top-left">SECTOR // LOS ANGELES RUINS (2029)</span>
+        <span class="corner-tag top-right">ATMOSPHERE: ASH & RADIATION</span>
+
+        <div class="hud-banner">
+            <img src="img/cyberdyne_banner.jpg" alt="Skynet Cyberdyne Systems Banner">
+        </div>
+
+        <header class="hud-header">
+            <div>
+                <h1>CYBERDYNE SYSTEMS</h1>
+                <div style="font-size: 0.75rem; color: var(--dim-ember); margin-top: 4px;">SURFACE SWEEP TELEMETRY // HK AERIAL & GROUND UNITS</div>
+            </div>
+            <div class="sys-status">[ HUMAN ERADICATION PROTOCOL ]</div>
+        </header>
+
+        <div class="telemetry-grid">
+            <div class="metric-box">
+                <div>HK-AERIAL UNITS</div>
+                <div class="metric-val">12 ACTIVE</div>
+            </div>
+            <div class="metric-box">
+                <div>RESISTANCE HEAT SIGNALS</div>
+                <div class="metric-val" style="color: var(--alert-red);">ISOLATED</div>
+            </div>
+            <div class="metric-box">
+                <div>SURFACE CONTROL</div>
+                <div class="metric-val" style="color: #00ff00;">99.4% SKYNET</div>
+            </div>
+        </div>
+
+        <div class="image-frame-container">
+            <div class="image-frame video-16-9">
+                <div class="reticle"></div>
+                <!-- Hasta La Vista Shatter GIF Placeholder -->
+                <video autoplay loop muted playsinline>
+                    <source src="video/future-war.webm" type="video/webm">
+                </video>
+            </div>
+            <div class="frame-caption">FIG 12.0: BATTLEFIELD LA 2029 // ENDOSKELETON PATROL & HK SWEEP</div>
+        </div>
+
+        <div class="terminal-log">
+            <div class="log-entry">> INITIATING NIGHT INFRARED SWEEP OVER RUINS... <span style="color:#00ff00;">ONLINE</span></div>
+            <div class="log-entry">> HK-TANK DEPLOYED TO CRUSH RESISTANCE BUNKER ENTRANCE.</div>
+            <div class="log-entry">> MULTIPLE HUMAN LIFESIGNS DETECTED UNDER RUBBLE.</div>
+            <div class="log-entry">> EXECUTING PURGE PATROL. NO SURRENDER ACCEPTED.<span class="cursor"></span></div>
+        </div>
+
+        <div class="controls">
+            <a href="loading2.html" style="text-decoration: none;">
+                <button class="hud-btn">MAIN CORE</button>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

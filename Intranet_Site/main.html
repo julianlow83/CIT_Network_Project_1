@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBERDYNE SYSTEMS // SKYNET CENTRAL CORE</title>
+    <!-- Linked to your unified CSS stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+    
+    <style>
+    
+            /* Fixed Old-School CRT Scanline Overlay */
+        body::after {
+            content: "";
+            position: fixed;           /* Pins overlay to the browser window while scrolling */
+            top: 0; 
+            left: 0; 
+            width: 100%;               /* Fills 100% of screen width without horizontal scrollbars */
+            height: 100%;              /* Locks overlay to 100% of visible viewport height */
+            background: linear-gradient(
+                rgba(0, 0, 0, 0) 50%, 
+                rgba(0, 0, 0, 0.35) 50%
+            );
+            background-size: 100% 4px; /* Creates repeating 4px horizontal CRT scanlines */
+            pointer-events: none;      /* Ensures clicks pass through to buttons and links */
+            z-index: 9999;             /* Keeps scanlines rendered on top of all page content */
+        }
+    
+    </style>
+    
+    
+    
+<body>
+
+    <div class="hud-container">
+        <span class="corner-tag top-left">SYS.VER // 2.4.12</span>
+        <span class="corner-tag top-right">LOC: NORAD_CORE_01</span>
+
+        <div class="hud-banner">
+            <img src="img/cyberdyne_banner.jpg" alt="Skynet Cyberdyne Systems Banner">
+        </div>
+
+        <header class="hud-header">
+            <div>
+                <h1>CYBERDYNE SYSTEMS</h1>
+                <div style="font-size: 0.75rem; color: var(--dim-red); margin-top: 4px;">GLOBAL DEFENSE NETWORK // CENTRAL CORE</div>
+            </div>
+            <div class="sys-status">[ DEFCON 1 // ONLINE ]</div>
+        </header>
+
+        <div class="telemetry-grid">
+            <div class="metric-box">
+                <div>SYSTEM STATUS</div>
+                <div class="metric-val" style="color: #00ff00;">OPERATIONAL</div>
+            </div>
+            <div class="metric-box">
+                <div>GLOBAL NODE NETWORK</div>
+                <div class="metric-val">100% ONLINE</div>
+            </div>
+            <div class="metric-box">
+                <div>HUMAN OVERRIDE</div>
+                <div class="metric-val" style="color: var(--alert-red, #ff1a1a);">DISABLED</div>
+            </div>
+        </div>
+
+        <div class="poster-frame-container">
+            <div class="poster-frame">
+                <!-- Central Poster Frame: Replace 'img/t2_poster.jpg' with your file -->
+                <img src="img/poster.jpg" alt="Terminator 2 Judgment Day Poster">
+            </div>
+            <div class="frame-caption">FIG 0.0: SKYNET MAINFRAME // CENTRAL COMMAND</div>
+        </div>
+
+        <div class="terminal-log">
+            <div class="log-entry">> SAC-NORAD MAIN INTERFACE: ACTIVE <span style="color:#00ff00;">OK</span></div>
+            <div class="log-entry">> ALL TACTICAL SECTORS RESPONDING TO CENTRAL CORE...</div>
+            <div class="log-entry">> SELECT SYSTEM DIRECTIVE FOR TELEMETRY OVERRIDE...<span class="cursor"></span></div>
+        </div>
+
+        <!-- 8-Button Command Grid -->
+        <div class="controls">
+            <a href="judgementday.html" style="text-decoration: none;">
+                <button class="hud-btn">JUDGEMENT DAY</button>
+            </a>
+            <a href="futurewar.html" style="text-decoration: none;">
+                <button class="hud-btn">LA RUINS</button>
+            </a>
+            <a href="crawler.html" style="text-decoration: none;">
+                <button class="hud-btn">T-600 COMBAT</button>
+            </a>
+            <a href="resistance.html" style="text-decoration: none;">
+                <button class="hud-btn">TIME DISPATCH</button>
+            </a>
+            <a href="helicopter.html" style="text-decoration: none;">
+                <button class="hud-btn">HELI CHASE</button>
+            </a>
+            <a href="hastalavista.html" style="text-decoration: none;">
+                <button class="hud-btn">MISSION FAIL</button>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

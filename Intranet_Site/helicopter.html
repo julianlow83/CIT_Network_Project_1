@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBERDYNE SYSTEMS // AERIAL INTERCEPTION ANALYSIS</title>
+    <!-- Linked to your unified CSS stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="hud-container">
+        <span class="corner-tag top-left">UNIT // T-1000 MIMETIC POLYALLOY</span>
+        <span class="corner-tag top-right">SECTOR: CYBERDYNE HQ ALLEY</span>
+
+        <div class="hud-banner">
+            <img src="img/cyberdyne_banner.jpg" alt="Skynet Cyberdyne Systems Banner">
+        </div>
+
+        <header class="hud-header">
+            <div>
+                <h1>CYBERDYNE SYSTEMS</h1>
+                <div style="font-size: 0.75rem; color: var(--dim-cyan); margin-top: 4px;">AERIAL HIJACK TELEMETRY // MID-AIR VEHICLE BOARDING</div>
+            </div>
+            <div class="sys-status">[ "GET OUT." ]</div>
+        </header>
+
+        <div class="telemetry-grid">
+            <div class="metric-box">
+                <div>LAUNCH VECTOR</div>
+                <div class="metric-val">2ND STORY WINDOW</div>
+            </div>
+            <div class="metric-box">
+                <div>INTERCEPT TARGET</div>
+                <div class="metric-val">BELL 206 HELICOPTER</div>
+            </div>
+            <div class="metric-box">
+                <div>PILOT DISPLACEMENT</div>
+                <div class="metric-val" style="color: #00ff00;">100% SUCCESSFUL</div>
+            </div>
+        </div>
+
+        <div class="image-frame-container">
+            <div class="image-frame video-16-9">
+                <div class="reticle"></div>
+                <video autoplay loop muted playsinline>
+                    <source src="video/helicopter.webm" type="video/webm">
+                </video>
+            </div>
+            <div class="frame-caption">FIG 15.0: CYBERDYNE BUILDING // MOTORCYCLE TO HELICOPTER HIJACK</div>
+        </div>
+
+        <div class="terminal-log">
+            <div class="log-entry">> PURSUIT TARGETS ESCAPING IN SWAT VAN... <span style="color:#00ff00;">TRACKING</span></div>
+            <div class="log-entry">> ACCELERATING MOTORCYCLE UP STAIRWELL TO 2ND FLOOR...</div>
+            <div class="log-entry">> BREACHING WINDOW GLASS. MID-AIR BOARDING INITIATED.</div>
+            <div class="log-entry">> ISSUING PILOT DIRECTIVE: "GET OUT." LIQUID METAL FLUIDITY ENGAGED.<span class="cursor"></span></div>
+        </div>
+
+        <div class="controls">
+            <a href="loading5.html" style="text-decoration: none;">
+                <button class="hud-btn">MAIN CORE</button>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
