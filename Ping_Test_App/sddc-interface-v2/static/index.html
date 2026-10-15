@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDDC | SKYNET: DEADLINK Diagnostic Core</title>
+  <link rel="stylesheet" href="sddc.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">CYBERDYNE SYSTEMS</div>
+        <h1>SKYNET: DEADLINK <span>Diagnostic Core</span></h1>
+      </div>
+      <div class="header-state">
+        <span id="adapter-badge" class="adapter-badge">MOCK / OFFLINE</span>
+        <div class="system-state" aria-live="assertive">
+          <span id="system-dot" class="status-dot connected"></span>
+          <div>
+            <strong>SDDC</strong>
+            <small id="system-status-text">INITIALISING</small>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="mock-warning" id="mock-warning">
+      Prototype data only. Device state and evidence shown in mock mode are not live network observations.
+    </div>
+
+    <section class="summary-grid" aria-label="System summary">
+      <article class="summary-card"><span>Devices Connected</span><strong id="summary-devices">0 / 0</strong></article>
+      <article class="summary-card"><span>Tests Passed</span><strong id="summary-pass">0</strong></article>
+      <article class="summary-card"><span>Failed</span><strong id="summary-fail">0</strong></article>
+      <article class="summary-card"><span>Errors</span><strong id="summary-error">0</strong></article>
+      <article class="summary-card"><span>Not Run</span><strong id="summary-notrun">0</strong></article>
+    </section>
+
+    <section class="device-strip panel-lite">
+      <div class="section-heading-row">
+        <div><div class="eyebrow">INFRASTRUCTURE</div><h2>Device Status</h2></div>
+        <button class="ghost-button" id="refresh-devices">Refresh</button>
+      </div>
+      <div id="device-list" class="device-list"></div>
+    </section>
+
+    <main class="workspace">
+      <section class="panel test-panel" aria-label="SDDC test suite">
+        <div class="panel-header">
+          <div><div class="eyebrow">VALIDATION SUITE</div><h2>Tests</h2></div>
+          <div class="selection-count"><span id="selected-count">0</span> selected</div>
+        </div>
+
+        <div class="toolbar">
+          <div class="filters" id="filters" aria-label="Test filters"></div>
+          <div class="toolbar-actions">
+            <button class="text-button" id="select-all">Select all</button>
+            <button class="text-button" id="clear-selection">Clear</button>
+          </div>
+        </div>
+
+        <div class="batch-policy">
+          <span>Batch policy</span>
+          <label><input type="checkbox" id="stop-on-fail"> Stop on FAIL</label>
+          <label><input type="checkbox" id="stop-on-error"> Stop on ERROR</label>
+          <small>Manual steps always pause the queue.</small>
+        </div>
+
+        <div class="test-table-header" aria-hidden="true">
+          <span></span><span>Test</span><span>Category</span><span>Mode</span><span>Status</span>
+        </div>
+        <div id="test-list" class="test-list"></div>
+
+        <div class="panel-footer">
+          <span id="batch-progress" class="batch-progress"></span>
+          <button id="run-selected" class="primary-button">Run Selected</button>
+        </div>
+      </section>
+
+      <section class="panel detail-panel" aria-label="Selected test details">
+        <div class="detail-header">
+          <div>
+            <div class="eyebrow" id="detail-category">SELECT A TEST</div>
+            <h2 id="detail-title">Test details</h2>
+            <p id="detail-name">Choose a test from the suite to inspect it.</p>
+          </div>
+          <span id="detail-status" class="status-badge status-not-run">NOT RUN</span>
+        </div>
+
+        <div class="detail-meta four">
+          <div><span>Mode</span><strong id="detail-mode">—</strong></div>
+          <div><span>Sources</span><strong id="detail-sources">—</strong></div>
+          <div><span>Targets</span><strong id="detail-targets">—</strong></div>
+          <div><span>Executed on</span><strong id="detail-executed">—</strong></div>
+        </div>
+
+        <div class="detail-meta three">
+          <div><span>Started</span><strong id="detail-started">—</strong></div>
+          <div><span>Finished</span><strong id="detail-finished">—</strong></div>
+          <div><span>Duration</span><strong id="detail-duration">—</strong></div>
+        </div>
+
+        <div class="detail-section" id="prereq-wrap">
+          <h3>Prerequisite</h3><p id="detail-prerequisite">—</p>
+        </div>
+        <div class="detail-section"><h3>Expected</h3><p id="detail-expected">—</p></div>
+        <div class="detail-section"><h3>Observed</h3><p id="detail-observed">No result recorded.</p></div>
+        <div id="detail-error-wrap" class="detail-section error-block hidden"><h3>Error</h3><p id="detail-error"></p></div>
+
+        <div class="detail-actions">
+          <button id="run-test" class="primary-button" disabled>Run Test</button>
+        </div>
+
+        <div id="manual-panel" class="manual-panel hidden" aria-live="assertive">
+          <div class="manual-title"><span id="manual-title-text">MANUAL TEST REQUIRED</span></div>
+          <div class="manual-location" id="manual-location"></div>
+          <pre id="manual-instructions"></pre>
+          <label class="notes-label" for="manual-notes">Operator notes / captured output</label>
+          <textarea id="manual-notes" rows="4" placeholder="Optional: paste the observed output or note what you did."></textarea>
+          <div class="manual-actions" id="manual-actions"></div>
+        </div>
+
+        <section class="evidence-section" aria-label="Command evidence">
+          <div class="evidence-heading">
+            <div><div class="eyebrow">EVIDENCE</div><h2>Command Results</h2></div>
+            <span id="evidence-count">0 items</span>
+          </div>
+          <div id="evidence-list" class="evidence-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <section class="panel terminal-panel">
+      <div class="terminal-header">
+        <div><div class="eyebrow">LIVE EVIDENCE</div><h2>Execution Console</h2></div>
+        <button class="ghost-button" id="clear-console">Clear</button>
+      </div>
+      <div id="terminal" class="terminal" role="log" aria-live="polite" aria-relevant="additions"></div>
+    </section>
+
+    <footer>
+      <span>SDDC Interface Prototype v2</span>
+      <span id="footer-adapter">Adapter: MOCK</span>
+    </footer>
+  </div>
+
+  <script src="fixtures.js"></script>
+  <script src="api.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>
